@@ -19,13 +19,14 @@ import useResponsive from "../../../hooks/useResponsive"
 interface TableBoxPropsType {
     rowHeight: number;
     headers: IMSTblHead[];
-    data: any[],
-    render: (row:any) => IMSTblCell[]
+    data: any[];
+    render: (row:any) => IMSTblCell[];
     containerWidth?: number;
     containerHeight?: number;
+    actionSection?: (row: any) => React.ReactNode;
 }
 
-const TableBox = ({ headers, data, render, containerWidth=0, containerHeight=0, rowHeight }:TableBoxPropsType) => {
+const TableBox = ({ headers, data, render, actionSection, containerWidth=0, containerHeight=0, rowHeight }:TableBoxPropsType) => {
 
     const { isDesktop, isTablet, isMobile } = useResponsive()
 
@@ -38,6 +39,8 @@ const TableBox = ({ headers, data, render, containerWidth=0, containerHeight=0, 
 
     // GET ROW INFO
     const numberOfRows = React.useMemo(() => Math.floor(height / rowHeight), [height, rowHeight])
+
+    const showActionHead = React.useMemo(() => Boolean(actionSection), [actionSection])
 
     const updtateHeaders = (hs:IMSTblHead[]) => setHeads(hs)
 
@@ -77,6 +80,7 @@ const TableBox = ({ headers, data, render, containerWidth=0, containerHeight=0, 
                             key={`row-${index}`} 
                             data={_row}
                             hoverHead={hoverHead}
+                            action={actionSection && actionSection(row)}
                         />
                     })}
                 </TableBody>

@@ -1,6 +1,11 @@
 import { styled } from '@mui/system'
 
-import Box from '@mui/material/Box'
+import { 
+    Box,
+    IconButton,
+} from '@mui/material'
+
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
 import MSTable from '../../components/MSTable'
 
@@ -74,7 +79,16 @@ const HomePage = () => {
     return (
         <Container>
             <Box sx={{ width: '800px', height: '700px' }}>
-                <MSTable headers={TBL_HEADERS} data={DATA} render={render} />
+                <MSTable 
+                    headers={TBL_HEADERS} 
+                    data={DATA} 
+                    render={render} 
+                    actionSection={(data: any) => {
+                        const d = data as TBL_DATA
+
+                        return <IconButton disableRipple onClick={() => { alert(d.title) }}><ArrowForwardIosIcon sx={{ fontSize: '.7rem' }} /></IconButton>
+                    }}    
+                />
             </Box>
         </Container>
     )
