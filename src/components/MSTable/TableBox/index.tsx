@@ -2,7 +2,9 @@ import React from "react"
 
 import { 
     IMSTblHead,
-    IMSTblCell
+    IMSTblCell,
+    IMSTblKeyInputType,
+    IMSTableHeadInputType
 } from "../../../models/MSTableModel"
 
 import { 
@@ -16,17 +18,23 @@ import EnhancedTableHead from "./EnhancedTableHead"
 
 import useResponsive from "../../../hooks/useResponsive"
 
+interface MenuItemType {
+    title: string;
+    icon?: React.ReactNode;
+}
+
 interface TableBoxPropsType {
     rowHeight: number;
     headers: IMSTblHead[];
     data: any[];
     render: (row:any) => IMSTblCell[];
+    submenuItems: null | MenuItemType[]
     containerWidth?: number;
     containerHeight?: number;
     actionSection?: (row: any) => React.ReactNode;
 }
 
-const TableBox = ({ headers, data, render, actionSection, containerWidth=0, containerHeight=0, rowHeight }:TableBoxPropsType) => {
+const TableBox = ({ headers, data, render, actionSection, containerWidth=0, containerHeight=0, rowHeight, submenuItems=null }:TableBoxPropsType) => {
 
     const { isDesktop, isTablet, isMobile } = useResponsive()
 
@@ -41,6 +49,11 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
     const numberOfRows = React.useMemo(() => Math.floor(height / rowHeight), [height, rowHeight])
 
     const showActionHead = React.useMemo(() => Boolean(actionSection), [actionSection])
+
+    const inputHeaderKeys = React.useMemo<IMSTblKeyInputType[]>(() => headers.filter((h) => Boolean(h.inputType)).map((h) => ({
+        key: h.key,
+        inputType: h.inputType || IMSTableHeadInputType.TEXT
+    })), [headers])
 
     const updtateHeaders = (hs:IMSTblHead[]) => setHeads(hs)
 
@@ -71,7 +84,7 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
                 size="medium"
                 stickyHeader
             >
-                <EnhancedTableHead headers={displayedHeads} hoverHead={hoverHead} updtateHeaders={updtateHeaders} setHoverHead={defineHoverHeader} />
+                <EnhancedTableHead showAction={Boolean(actionSection)} headers={displayedHeads} hoverHead={hoverHead} updtateHeaders={updtateHeaders} setHoverHead={defineHoverHeader} />
                 <TableBody>
                     {data && data.map((row, index) => {
                         const _row = orderCellsByHeader(render(row))
@@ -81,6 +94,8 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
                             data={_row}
                             hoverHead={hoverHead}
                             action={actionSection && actionSection(row)}
+                            items={submenuItems}
+                            inputHeaderKeys={inputHeaderKeys}
                         />
                     })}
                 </TableBody>

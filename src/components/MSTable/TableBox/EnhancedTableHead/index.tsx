@@ -10,6 +10,7 @@ import {
 import { 
     TableHead,
     TableRow,
+    TableCell
 } from '@mui/material'
 
 import useResponsive from '../../../../hooks/useResponsive'
@@ -19,13 +20,14 @@ import DragAndDropTableCell from './DragAndDropTableCell'
 interface EnhancedTableHeadPropsType {
     headers: IMSTblHead[]
     hoverHead: string | null
+    showAction?: boolean
     updtateHeaders: (hs:IMSTblHead[]) => void
     setHoverHead: (value: string | null) => void
 }
 
 const TYPE_CARD = 'CARD'
 
-const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead }:EnhancedTableHeadPropsType) => {
+const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, showAction=false }:EnhancedTableHeadPropsType) => {
 
     const [ heads, setHeads ] = React.useState<IMSTblHead[]>(headers)
 
@@ -79,6 +81,7 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead }:
         <TableHead>
             <TableRow ref={drop}>
                 {heads.map((head, index) => (<DragAndDropTableCell dragHover={hoverHead == head.key} hideLeftBorder={index == 0} key={head.key} head={head} findItem={FindHeader} moveItem={MoveHeader} hoverHeader={HoverHeader} clearHoverHeader={ClearHoverHeader} />))}
+                <TableCell></TableCell>
             </TableRow>
         </TableHead>
     )

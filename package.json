@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@hookform/resolvers": "^3.9.0",
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.4",
     "immutability-helper": "^3.1.1",
@@ -19,9 +20,11 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.1",
     "react-resize-detector": "^11.0.1",
     "react-router-dom": "^6.27.0",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

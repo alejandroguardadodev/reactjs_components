@@ -5,19 +5,25 @@ import {
     IconButton,
 } from '@mui/material'
 
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
 import MSTable from '../../components/MSTable'
 
 import { 
     IMSTblHead,
-    IMSTblCell
+    IMSTblCell,
+    IMSTableHeadInputType
 } from '../../models/MSTableModel'
 
 const TBL_HEADERS:IMSTblHead[] = [
     {
         key: 'title',
-        label: 'Title'
+        label: 'Title',
+        inputType: IMSTableHeadInputType.TEXT,
+        onSubmit: (data:unknown) => {
+            alert(`Data: ${data}`)
+        } 
     },
     {
         key: 'descr',
@@ -75,6 +81,13 @@ const Container = styled(Box)(() => ({
     alignItems: 'center'
 }))
 
+const SUBMENU_ITEMS = [
+    {
+        title: 'Start',
+        icon: <StarBorderIcon />
+    }
+]
+
 const HomePage = () => {
     return (
         <Container>
@@ -87,7 +100,8 @@ const HomePage = () => {
                         const d = data as TBL_DATA
 
                         return <IconButton disableRipple onClick={() => { alert(d.title) }}><ArrowForwardIosIcon sx={{ fontSize: '.7rem' }} /></IconButton>
-                    }}    
+                    }}
+                    submenuItems={SUBMENU_ITEMS}
                 />
             </Box>
         </Container>

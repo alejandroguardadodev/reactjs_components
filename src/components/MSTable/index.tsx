@@ -12,16 +12,21 @@ import TableBox from "./TableBox"
 
 import { useResizeDetector } from 'react-resize-detector'
 
+interface MenuItemType {
+    title: string;
+    icon?: React.ReactNode;
+}
+
 interface MSTablePropsType {
     rowHeight?: number // DEFAULT SIZE OF EVERY ROW
     headers: IMSTblHead[]
     data: any[]
+    submenuItems?: null | MenuItemType[]
     render: (row:any) => IMSTblCell[]
     actionSection?: (row: any) => React.ReactNode
 }
 
-
-const MSTable = ({ headers, data, render, actionSection, rowHeight=40 }:MSTablePropsType) => {
+const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuItems=null }:MSTablePropsType) => {
 
     const { ref: tableContainerRef, width: tableContainerWidth, height: tableContainerHeight } = useResizeDetector()
 
@@ -44,6 +49,7 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40 }:MSTableP
                     data={data}
                     render={render}
                     actionSection={actionSection}
+                    submenuItems={submenuItems}
                 />
             </Box>
             <Box>Pagination</Box>
