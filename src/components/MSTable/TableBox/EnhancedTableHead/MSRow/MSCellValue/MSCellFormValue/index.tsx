@@ -15,6 +15,11 @@ import MSInput from '../../../../../../MSInput'
 
 type SchemaType = yup.InferType<typeof InlineSchema>
 
+interface IKeyValue {
+    key: string
+    value: string
+}
+
 const Form = styled('form')(() => ({
     width: '100%',
     padding: '1px 0px',
@@ -45,15 +50,16 @@ const Container = styled(Box, {
 interface MSCellFormValuePropsType {
     id: string
     type: 'text' | 'number'
-    title: string
     defaultValue?: string
     width?: number
     containerXLimit?: number
     cellXpos?: number
-    onSubmit?: (data:unknown) => void
+    rowId?: string
+    onSubmit?: (data:IKeyValue, id?:string) => void
+    onClose?: () => void
 }
 
-const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, containerXLimit=0, cellXpos=0, onSubmit }:MSCellFormValuePropsType) => {
+const MSCellFormValue = ({ id, type, onClose, defaultValue="", width=300, containerXLimit=0, cellXpos=0, rowId="", onSubmit }:MSCellFormValuePropsType) => {
     
     const methods = useForm<SchemaType>({
         defaultValues: {
@@ -66,7 +72,12 @@ const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, containe
     const offsetXLimit = React.useMemo(() => width + cellXpos, [width, cellXpos])
     
     const onFormSubmit = (data:SchemaType) => {
-        onSubmit?.(data.data)
+        onSubmit?.({
+            key: id,
+            value: `${data.data}`.trim()
+        }, rowId)
+
+        onClose?.()
     }
 
     return (
@@ -74,7 +85,7 @@ const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, containe
             <FormProvider {...methods}>
                 <Form onSubmit={methods.handleSubmit(onFormSubmit)}>
                     <Box sx={{ width: '100%' }}>
-                        <MSInput id={id} type={type} placeholder={defaultValue} label={title} inline />
+                        <MSInput id="data" type={type} placeholder={defaultValue} inline />
                     </Box>
                 </Form>
             </FormProvider>

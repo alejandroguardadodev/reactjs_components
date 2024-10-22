@@ -48,9 +48,10 @@ interface MSRowPropsType {
     inputHeaderKeys?: IMSTblKeyInputType[] // SPECIFIC HEADS THAT NEED TO BE RENDERED AS INPUT
     action?: null | React.ReactNode // ACTION TO BE RENDERED ON THE LAST CELL
     containerXLimit?: number // LIMIT THE X POSITION OF THE TABLE TO BE RENDERED
+    id?: string
 }
 
-const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXLimit=0 }:MSRowPropsType) => {
+const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXLimit=0, id="" }:MSRowPropsType) => {
     const cellRef = React.useRef<HTMLTableCellElement>(null) // GET THE APROPIATE CELL REF TO SHOW THE MENU
 
     const [mousePosition, setMousePosition] = React.useState<null | MousePositionType>(null) // USED FOR THE SUB MENU
@@ -80,6 +81,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
     const closeCellAsInput = () => { 
         setCellAsField(null) // IF THE CLICK IS OUTSIDE THE CELL, CLEAR THE CELL AS FIELD
         clearLineCellBorder() // remove line cell border
+        setCurrentCellX(0)
     } // CLOSE THE CELL AS INPUT
 
     const handleOutsideClick = (e:MouseEvent) => {
@@ -155,6 +157,8 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                             inputCellWidth={currentInputCellWidth}
                             containerXLimit={containerXLimit}
                             cellXpos={currentCellX}
+                            rowId={id}
+                            onClose={closeCellAsInput}
                         />
                     </TableCell>
                 ))}

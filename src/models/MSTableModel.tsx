@@ -1,3 +1,8 @@
+interface IKeyValue {
+    key: string
+    value: string
+}
+
 export enum IMSTableHeadInputType {
     TEXT = "text",
     NUMBER = "number"
@@ -6,7 +11,7 @@ export enum IMSTableHeadInputType {
 export interface IMSTblKeyInputType {
     key: string
     inputType: IMSTableHeadInputType
-    onSubmit?: (data:unknown) => void
+    onSubmit?: (data:IKeyValue, id?:string) => void
 }
 
 export interface IMSTblHead {
@@ -16,10 +21,11 @@ export interface IMSTblHead {
     hideOnMobileDevice?: boolean;
     hideOnTabletDevice?: boolean;
     hideOnDesktopDevice?: boolean;
-    onSubmit?: (data:unknown) => void
+    onSubmit?: (data:IKeyValue, id?:string) => void
 }
 
 export interface IMSTblCell {
     key: string; // RELATIONSHIP WITH HEADER
     value: string; // VALUE TO BE DISPLAYED
 }
+

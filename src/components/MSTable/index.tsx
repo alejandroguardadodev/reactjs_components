@@ -25,7 +25,7 @@ interface MSTablePropsType {
     headers: IMSTblHead[] // HEADERS OF THE TABLE
     data: any[] // DATA OF THE TABLE
     submenuItems?: null | MenuItemType[] // SUBMENU ITEMS
-    render: (row:any) => IMSTblCell[] // FUNCTION TO RENDER CELLS
+    render: (row:any) => [IMSTblCell[], string] // FUNCTION TO RENDER CELLS
     actionSection?: (row: any) => React.ReactNode // FUNCTION TO RENDER ACTION SECTION [ like OPEN MENU, ERASE, EDIT ]
 }
 

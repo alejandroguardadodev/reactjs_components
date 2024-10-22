@@ -28,7 +28,7 @@ interface TableBoxPropsType {
     rowHeight: number // ROW HEIGHT
     headers: IMSTblHead[] // HEADERS FOR THE TABLE
     data: any[]; // DATA OF THE TABLE
-    render: (row:any) => IMSTblCell[] // RENDER FUNCTION FOR THE ROWS
+    render: (row:any) => [IMSTblCell[], string] // RENDER FUNCTION FOR THE ROWS
     submenuItems: null | MenuItemType[] // SUB MENU ITEMS
     containerWidth?: number // CONTAINER WIDTH
     containerHeight?: number // CONTAINER HEIGHT
@@ -97,11 +97,14 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
                 <TableBody>
                     {/* DISPLAY ROWS */}
                     {data && data.map((row, index) => {
-                        const _row = orderCellsByHeader(render(row))
+                        const [_row, id] = render(row)
+
+                        const cells = orderCellsByHeader(_row)
 
                         return <MSRow
+                            id={id}
                             key={`row-${index}`} 
-                            data={_row}
+                            data={cells}
                             hoverHead={hoverHead}
                             action={actionSection && actionSection(row)}
                             items={submenuItems}
