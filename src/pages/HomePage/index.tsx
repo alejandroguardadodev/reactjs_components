@@ -16,20 +16,35 @@ import {
     IMSTableHeadInputType
 } from '../../models/MSTableModel'
 
+// MAIN STYLES FOR THE PAGE CONTAINER 
+const Container = styled(Box)(() => ({
+    width: '100%' , 
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+}))
+
+// HOLD THE HEADERS FOR A TABLE. IT IS USED TO IDENTITY CERTAIN ASPECTS OF THE TABLE COLUMNS/CELLS
 const TBL_HEADERS:IMSTblHead[] = [
     {
-        key: 'title',
-        label: 'Title',
+        key: 'title', // UNIQUE KEY FOR THE COLUMN [ IT IS USED TO IDENTIFY EVERY CELL ]
+        label: 'Title', // LABEL FOR THE COLUMN
+        // TO IDENTIFY THE USE OF AN INPUT FIELD IN THE CELL ------
         inputType: IMSTableHeadInputType.TEXT,
         onSubmit: (data:unknown) => {
             alert(`Data: ${data}`)
         } 
+        // --------------------------------------------------------
     },
     {
         key: 'descr',
         label: 'Description',
+        // IMPLEMENT A RESPONSIVE SYSTEM ON EVERY COLUMN ----------
         hideOnMobileDevice: true,
         hideOnTabletDevice: true,
+        // --------------------------------------------------------
     },
     {
         key: 'date',
@@ -38,15 +53,17 @@ const TBL_HEADERS:IMSTblHead[] = [
     }
 ]
 
+// INTERFACE TO IDENTIFY THE TYPE OF DATA ACCEPTED BY THE TABLE
 interface TBL_DATA {
     title: string,
     descr: string,
     date: string,
 }
 
+// HOLD THE DATA THAT WILL BE USED TO RENDER THE TABLE
 const DATA:TBL_DATA[] = [
     {
-        title: 'Test 1',
+        title: 'Test 1', // THEY KEY SHOULD BE THE SAME AS THE KEY IN THE TBL_HEADERS KEY PROPERTY
         descr: 'Aloha',
         date: '02/12/2023'
     },
@@ -57,6 +74,7 @@ const DATA:TBL_DATA[] = [
     }
 ] 
 
+// RENDER THE DATA TO THE TABLE
 const render = (data: TBL_DATA):IMSTblCell[] => [
     {
         key: 'title',
@@ -72,15 +90,7 @@ const render = (data: TBL_DATA):IMSTblCell[] => [
     }
 ]
 
-const Container = styled(Box)(() => ({
-    width: '100%' , 
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-}))
-
+// USED TO CREATE A SUB MENU FOR EVEY MENU ITEM
 const SUBMENU_ITEMS = [
     {
         title: 'Start',

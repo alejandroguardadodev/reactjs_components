@@ -13,24 +13,24 @@ import {
     TableCell
 } from '@mui/material'
 
-import useResponsive from '../../../../hooks/useResponsive'
-
 import DragAndDropTableCell from './DragAndDropTableCell'
 
 interface EnhancedTableHeadPropsType {
-    headers: IMSTblHead[]
-    hoverHead: string | null
-    showAction?: boolean
-    updtateHeaders: (hs:IMSTblHead[]) => void
-    setHoverHead: (value: string | null) => void
+    headers: IMSTblHead[] // headers: IMSTblHead[]
+    hoverHead: string | null // CURRENT HOVER HEAD
+    showAction?: boolean // SHOULD SHOW ACTION COLUMN
+    updtateHeaders: (hs:IMSTblHead[]) => void // UPDATE HEADERS CALLBACK
+    setHoverHead: (value: string | null) => void // SET CURRENT HOVER HEAD CALLBACK
 }
 
-const TYPE_CARD = 'CARD'
+const TYPE_CARD = 'CARD' // TO IDENTIFY CURRENT DRAG / DROP TYPE
 
 const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, showAction=false }:EnhancedTableHeadPropsType) => {
 
+    // COPY OF THE HEADS TO MODIFY
     const [ heads, setHeads ] = React.useState<IMSTblHead[]>(headers)
 
+    // FIND HEADER BY KEY 
     const FindHeader = React.useCallback(
         (key: string) => {
             const head = heads.filter((h) => `${h.key}` === key)[0]
@@ -42,8 +42,10 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
         }, [heads],
     )
 
+    // NO HOVER HEAD
     const ClearHoverHeader = () => setHoverHead(null)
 
+    // MOVE HEADER TO NEW INDEX 
     const MoveHeader = React.useCallback(
         (key: string, atIndex: number) => {
             const { head, index } = FindHeader(key)
@@ -58,6 +60,7 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
         }, [FindHeader, heads, setHeads],
     )
 
+    // SET HOVER HEADER
     const HoverHeader = (key: string) => {
         setHoverHead(key)
 
@@ -71,8 +74,10 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
 
     }
 
+    // ACTIVATE HEADER AND DEFINE DROP / DRAG KEY
     const [, drop] = useDrop(() => ({ accept: TYPE_CARD }))
 
+    // UPDATE ORIGINAL HEADERS EVERY TIME HEADERS DOES
     React.useEffect(() => {
         updtateHeaders(heads)
     }, [heads])
@@ -80,8 +85,21 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
     return (
         <TableHead>
             <TableRow ref={drop}>
-                {heads.map((head, index) => (<DragAndDropTableCell dragHover={hoverHead == head.key} hideLeftBorder={index == 0} key={head.key} head={head} findItem={FindHeader} moveItem={MoveHeader} hoverHeader={HoverHeader} clearHoverHeader={ClearHoverHeader} />))}
-                <TableCell></TableCell>
+                {heads.map((head, index) => (
+                    <DragAndDropTableCell 
+                        dragHover={hoverHead == head.key} 
+                        hideLeftBorder={index == 0} 
+                        key={head.key} 
+                        head={head} 
+                        findItem={FindHeader} 
+                        moveItem={MoveHeader} 
+                        hoverHeader={HoverHeader} 
+                        clearHoverHeader={ClearHoverHeader} 
+                    />
+                ))}
+
+                {/* CREATE A NEW COLUMN IF ACTIONS IS REQUIRED */}
+                {showAction && (<TableCell></TableCell>)}
             </TableRow>
         </TableHead>
     )

@@ -38,7 +38,7 @@ const theme = createTheme({
             borderBottom: '0px',
             //border: '1px solid rgba(0,0,0,.4)',
             borderLeft: '1px solid rgba(0,0,0,.2) !important',
-            transition: 'border .2s easy-in-out, background .2s easy-in-out',
+            transition: 'all .2s easy-in-out',
             '&:hover': {
                 //border: '1px solid #6c7a89',
               background: 'rgba(0,0,0,.02)'

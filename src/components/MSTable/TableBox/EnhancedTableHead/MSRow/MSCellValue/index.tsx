@@ -10,15 +10,24 @@ interface MSCellValuePropsType {
     value: string
     showInputCell: boolean
     inputCell: null | IMSTblKeyInputType
+    inputCellWidth?: number
 }
 
-const MSCellValue = ({ value, showInputCell, inputCell }:MSCellValuePropsType) => {
+const MSCellValue = ({ value, showInputCell, inputCell, inputCellWidth=0 }:MSCellValuePropsType) => {
 
     const useCellAsInput = React.useMemo(() => Boolean(inputCell), [inputCell])
-
-    if (showInputCell && useCellAsInput) return (
-        <MSCellFormValue id="data" title={inputCell?.key || ""} type={inputCell?.inputType || 'text'} defaultValue={value}/>
-    )
+    
+    if (showInputCell && useCellAsInput) return (<>
+        <MSCellFormValue 
+            id="data" 
+            defaultValue={value} 
+            title={inputCell?.key || ""} 
+            type={inputCell?.inputType || 'text'} 
+            width={Math.max(inputCellWidth, 300)}
+            onSubmit={inputCell?.onSubmit}
+        />
+        {value}
+    </>)
 
     return value
 }

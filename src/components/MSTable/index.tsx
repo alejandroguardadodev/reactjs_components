@@ -12,6 +12,7 @@ import TableBox from "./TableBox"
 
 import { useResizeDetector } from 'react-resize-detector'
 
+// SUB MENU ITEMS TYPES
 interface MenuItemType {
     title: string;
     icon?: React.ReactNode;
@@ -19,11 +20,11 @@ interface MenuItemType {
 
 interface MSTablePropsType {
     rowHeight?: number // DEFAULT SIZE OF EVERY ROW
-    headers: IMSTblHead[]
-    data: any[]
-    submenuItems?: null | MenuItemType[]
-    render: (row:any) => IMSTblCell[]
-    actionSection?: (row: any) => React.ReactNode
+    headers: IMSTblHead[] // HEADERS OF THE TABLE
+    data: any[] // DATA OF THE TABLE
+    submenuItems?: null | MenuItemType[] // SUBMENU ITEMS
+    render: (row:any) => IMSTblCell[] // FUNCTION TO RENDER CELLS
+    actionSection?: (row: any) => React.ReactNode // FUNCTION TO RENDER ACTION SECTION [ like OPEN MENU, ERASE, EDIT ]
 }
 
 const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuItems=null }:MSTablePropsType) => {
@@ -34,9 +35,12 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
         <Stack 
             spacing={2}
             sx={{
+                padding: '10px',
                 width: '100%',
                 height: '100%',
-                border: '1px solid black'
+                border: '1px solid black',
+                borderRadius: '5px',
+                boxShadow: '0px 0px 20px -10px rgba(0,0,0,0.6)'
             }}
         >
             <Box>Toolbar</Box>

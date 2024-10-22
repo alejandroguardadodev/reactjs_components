@@ -42,43 +42,53 @@ interface MenuItemType {
 }
 
 interface MSRowPropsType {
-    data: (IMSTblCell | undefined)[]
-    hoverHead: string | null
-    items: null | MenuItemType[]
-    inputHeaderKeys?: IMSTblKeyInputType[]
-    action?: null | React.ReactNode
+    data: (IMSTblCell | undefined)[] // DATA TO BE RENDER ON THE TABLE
+    hoverHead: string | null // KNOW WHICH HEAD IS HOVERED SO THE CORRESPONDING CELL WILL BE HIGHLIGHTED
+    items: null | MenuItemType[] //SUB MENU ITEMS
+    inputHeaderKeys?: IMSTblKeyInputType[] // SPECIFIC HEADS THAT NEED TO BE RENDERED AS INPUT
+    action?: null | React.ReactNode // ACTION TO BE RENDERED ON THE LAST CELL
 }
 
 const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowPropsType) => {
-    const cellRef = React.useRef<HTMLTableCellElement>(null);
+    const cellRef = React.useRef<HTMLTableCellElement>(null) // GET THE APROPIATE CELL REF TO SHOW THE MENU
 
-    const [mousePosition, setMousePosition] = React.useState<null | MousePositionType>(null)
-    const [cellAsField, setCellAsField] = React.useState<null | IMSTblKeyInputType>(null)
+    const [mousePosition, setMousePosition] = React.useState<null | MousePositionType>(null) // USED FOR THE SUB MENU
+    const [cellAsField, setCellAsField] = React.useState<null | IMSTblKeyInputType>(null) // INPUT INFORMATION BY CELLS
+    const [lineCellBorder, setLineCellBorder] = React.useState<null | string>(null) // USED TO SHOW THE LINE CELL BORDER
 
-    const useMenu = React.useMemo(() => Boolean(items), [items])
-    const openSubMenu = React.useMemo(() => Boolean(mousePosition), [mousePosition])
+    const useMenu = React.useMemo(() => Boolean(items), [items]) // KNOW IF THE ROW HAS A SUB MENU
+    const openSubMenu = React.useMemo(() => Boolean(mousePosition), [mousePosition]) // USE MOUSE POSITION TO KNOW IF THE SUB MENU IS OPEN
+
+    const currentInputCellWidth = React.useMemo(() => (Boolean(cellRef) && Boolean(cellRef.current))? cellRef.current?.clientWidth : 0, [cellRef]) // GET THE WIDTH OF THE CURRENT INPUT CELL
 
     const subMenuRealPosition = React.useMemo<MousePositionType>(() => {
-        if (!openSubMenu) return { x:0, y:0 }
-        if (!mousePosition) return { x: 0, y: 0 }
+        if (!openSubMenu) return { x:0, y:0 } // IF THE SUB MENU IS NOT OPEN, RETURN A DEFAULT POSITION
+        if (!mousePosition) return { x: 0, y: 0 } // IF THE MOUSE POSITION IS NOT DEFINED, RETURN A DEFAULT POSITION
 
+        // SAVED MOUSE POSITION
         return {
             x: mousePosition.x,
             y: mousePosition.y
         }
     }, [openSubMenu, mousePosition])
 
-    const handleSubMenuClose = () => { setMousePosition(null); }
+    const handleSubMenuClose = () => { setMousePosition(null); } // CLOSE THE SUB MENU BY CLEARING THE MOUSE POSITION VAR
+    const clearLineCellBorder = () => { setLineCellBorder(null) } // CLEAR THE LINE CELL BORDER
+
+    const closeCellAsInput = () => { 
+        setCellAsField(null) // IF THE CLICK IS OUTSIDE THE CELL, CLEAR THE CELL AS FIELD
+        clearLineCellBorder() // remove line cell border
+    } // CLOSE THE CELL AS INPUT
 
     const handleOutsideClick = (e:MouseEvent) => {
-        if (!cellAsField) return
-
+        if (!cellAsField) return // IF THERE IS NOT ANY CELL AS FIELD, DO NOTHING
+        
         if (cellRef.current && !cellRef.current.contains(e.target as Node)) {
-            setCellAsField(null)
+            closeCellAsInput() // remove line cell border
         }
     }
 
-    React.useEffect(() => {
+    React.useEffect(() => { // ADD EVENT LISTENER TO HANDLE OUTSIDE CLICKS
         document.addEventListener("mousedown", handleOutsideClick);
         return () => {
           document.removeEventListener("mousedown", handleOutsideClick);
@@ -92,11 +102,11 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowProps
                 tabIndex={-1}
                 sx={{ cursor: 'pointer' }}
                 onContextMenu={(event) => {
-                    if (!useMenu) return;
+                    if (!useMenu) return; // CHECK IF THE SUB MENU IS ENABLED
 
-                    event.preventDefault()
+                    event.preventDefault() 
                     
-                    if (!openSubMenu) {
+                    if (!openSubMenu) { // SAVE THE MOUSE POSITION IF THE SUB MENU IS NOT OPEN
                         setMousePosition({
                             x: event.clientX,
                             y: event.clientY,
@@ -110,12 +120,17 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowProps
                         ref={(Boolean(cellAsField) && cellAsField?.key == cell.key)? cellRef : null}
                         className='hover-data-cell'
                         sx={{
+                            position: 'relative',
                             ...(index == 0 && {
                                 borderLeft: '0px !important'
                             }),
-                            ...(index !== 0 && hoverHead == cell.key && {
+                            ...(hoverHead == cell.key && {
                                 borderLeft: '1px solid #038C65 !important'
-                            })
+                            }),
+                            ...(Boolean(lineCellBorder) && lineCellBorder == cell.key && {
+                                border: '1px solid transparent !important',
+                                // padding: '0px !important'
+                            }),
                         }}
                         onDoubleClick={() => {
                             if (cellAsField) return 
@@ -123,10 +138,16 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowProps
                             var type: undefined | IMSTblKeyInputType;
                             if (type = inputHeaderKeys.find((h) => h.key == cell.key)) {
                                 setCellAsField(type)
+                                setLineCellBorder(cell.key)
                             }
                         }}
                     >
-                        <MSCellValue value={cell.value} showInputCell={Boolean(cellAsField) && cellAsField?.key == cell.key} inputCell={cellAsField} />
+                        <MSCellValue 
+                            value={cell.value} 
+                            showInputCell={Boolean(cellAsField) && cellAsField?.key == cell.key} 
+                            inputCell={cellAsField} 
+                            inputCellWidth={currentInputCellWidth}
+                        />
                     </TableCell>
                 ))}
 

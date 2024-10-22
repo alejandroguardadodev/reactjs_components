@@ -21,15 +21,32 @@ const Form = styled('form')(() => ({
     margin: '0px',
 }))
 
+const Container = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'containerWidth',
+})<{ containerWidth: number; }>(({ containerWidth }) => ({
+    position: 'absolute',
+    top: '-1px',
+    left: '-1px',
+    width: `${containerWidth + 2}px`,
+    height: 'calc(100% + 2px)',
+    border: '1px solid #038C65 !important',
+    background: '#F4F3F2',
+    zIndex: '1000',
+    boxShadow: '0px 0px 15px -6px rgba(0,0,0,0.6)',
+    display: 'flex',
+    alignItems: 'center'
+}))
+
 interface MSCellFormValuePropsType {
     id: string
     type: 'text' | 'number'
     title: string
     defaultValue?: string
+    width?: number
     onSubmit?: (data:unknown) => void
 }
 
-const MSCellFormValue = ({ id, type, title, defaultValue="", onSubmit }:MSCellFormValuePropsType) => {
+const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, onSubmit }:MSCellFormValuePropsType) => {
     
     const methods = useForm<SchemaType>({
         defaultValues: {
@@ -44,13 +61,15 @@ const MSCellFormValue = ({ id, type, title, defaultValue="", onSubmit }:MSCellFo
     }
 
     return (
-        <FormProvider {...methods}>
-            <Form onSubmit={methods.handleSubmit(onFormSubmit)}>
-                <Box sx={{ width: '100%' }}>
-                    <MSInput />
-                </Box>
-            </Form>
-        </FormProvider>
+        <Container containerWidth={width}>
+            <FormProvider {...methods}>
+                <Form onSubmit={methods.handleSubmit(onFormSubmit)}>
+                    <Box sx={{ width: '100%' }}>
+                        <MSInput id={id} type={type} placeholder={defaultValue} label={title} inline />
+                    </Box>
+                </Form>
+            </FormProvider>
+        </Container>
     )
 }
 

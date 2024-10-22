@@ -4,9 +4,9 @@ export enum IMSTableHeadInputType {
 }
 
 export interface IMSTblKeyInputType {
-    key: string;
-    inputType: IMSTableHeadInputType;
-    optValues?: string[]
+    key: string
+    inputType: IMSTableHeadInputType
+    onSubmit?: (data:unknown) => void
 }
 
 export interface IMSTblHead {
@@ -16,6 +16,7 @@ export interface IMSTblHead {
     hideOnMobileDevice?: boolean;
     hideOnTabletDevice?: boolean;
     hideOnDesktopDevice?: boolean;
+    onSubmit?: (data:unknown) => void
 }
 
 export interface IMSTblCell {
