@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { MouseEventHandler } from 'react'
 
 import { styled } from '@mui/system'
 
@@ -47,14 +47,16 @@ interface MSRowPropsType {
     items: null | MenuItemType[] //SUB MENU ITEMS
     inputHeaderKeys?: IMSTblKeyInputType[] // SPECIFIC HEADS THAT NEED TO BE RENDERED AS INPUT
     action?: null | React.ReactNode // ACTION TO BE RENDERED ON THE LAST CELL
+    containerXLimit?: number // LIMIT THE X POSITION OF THE TABLE TO BE RENDERED
 }
 
-const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowPropsType) => {
+const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXLimit=0 }:MSRowPropsType) => {
     const cellRef = React.useRef<HTMLTableCellElement>(null) // GET THE APROPIATE CELL REF TO SHOW THE MENU
 
     const [mousePosition, setMousePosition] = React.useState<null | MousePositionType>(null) // USED FOR THE SUB MENU
     const [cellAsField, setCellAsField] = React.useState<null | IMSTblKeyInputType>(null) // INPUT INFORMATION BY CELLS
     const [lineCellBorder, setLineCellBorder] = React.useState<null | string>(null) // USED TO SHOW THE LINE CELL BORDER
+    const [currentCellX, setCurrentCellX] = React.useState<number>(0) // USED TO SHOW THE LINE CELL BORDER
 
     const useMenu = React.useMemo(() => Boolean(items), [items]) // KNOW IF THE ROW HAS A SUB MENU
     const openSubMenu = React.useMemo(() => Boolean(mousePosition), [mousePosition]) // USE MOUSE POSITION TO KNOW IF THE SUB MENU IS OPEN
@@ -132,13 +134,17 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowProps
                                 // padding: '0px !important'
                             }),
                         }}
-                        onDoubleClick={() => {
+                        onDoubleClick={(e) => {
                             if (cellAsField) return 
 
                             var type: undefined | IMSTblKeyInputType;
                             if (type = inputHeaderKeys.find((h) => h.key == cell.key)) {
                                 setCellAsField(type)
                                 setLineCellBorder(cell.key)
+                                
+                                if(e) {
+                                    setCurrentCellX(Math.floor(e.pageX))
+                                }
                             }
                         }}
                     >
@@ -147,6 +153,8 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[] }:MSRowProps
                             showInputCell={Boolean(cellAsField) && cellAsField?.key == cell.key} 
                             inputCell={cellAsField} 
                             inputCellWidth={currentInputCellWidth}
+                            containerXLimit={containerXLimit}
+                            cellXpos={currentCellX}
                         />
                     </TableCell>
                 ))}

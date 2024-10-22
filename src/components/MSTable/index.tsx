@@ -1,3 +1,5 @@
+import React from 'react'
+
 import {
     IMSTblHead,
     IMSTblCell
@@ -31,6 +33,8 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
 
     const { ref: tableContainerRef, width: tableContainerWidth, height: tableContainerHeight } = useResizeDetector()
 
+    const tableContainerXLimit = React.useMemo(() => Math.floor((tableContainerRef.current?.offsetLeft || 0) + (tableContainerWidth || 0)), [tableContainerRef.current?.offsetLeft, tableContainerWidth])
+
     return (
         <Stack 
             spacing={2}
@@ -54,6 +58,7 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
                     render={render}
                     actionSection={actionSection}
                     submenuItems={submenuItems}
+                    containerXLimit={tableContainerXLimit}
                 />
             </Box>
             <Box>Pagination</Box>

@@ -11,9 +11,11 @@ interface MSCellValuePropsType {
     showInputCell: boolean
     inputCell: null | IMSTblKeyInputType
     inputCellWidth?: number
+    containerXLimit?: number
+    cellXpos?: number
 }
 
-const MSCellValue = ({ value, showInputCell, inputCell, inputCellWidth=0 }:MSCellValuePropsType) => {
+const MSCellValue = ({ value, showInputCell, inputCell, inputCellWidth=0, containerXLimit=0, cellXpos=0 }:MSCellValuePropsType) => {
 
     const useCellAsInput = React.useMemo(() => Boolean(inputCell), [inputCell])
     
@@ -24,6 +26,8 @@ const MSCellValue = ({ value, showInputCell, inputCell, inputCellWidth=0 }:MSCel
             title={inputCell?.key || ""} 
             type={inputCell?.inputType || 'text'} 
             width={Math.max(inputCellWidth, 300)}
+            cellXpos={cellXpos}
+            containerXLimit={containerXLimit}
             onSubmit={inputCell?.onSubmit}
         />
         {value}

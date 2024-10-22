@@ -22,11 +22,16 @@ const Form = styled('form')(() => ({
 }))
 
 const Container = styled(Box, {
-    shouldForwardProp: (prop) => prop !== 'containerWidth',
-})<{ containerWidth: number; }>(({ containerWidth }) => ({
+    shouldForwardProp: (prop) => prop !== 'containerWidth' && prop !== 'rightPos',
+})<{ containerWidth: number; rightPos: boolean; }>(({ containerWidth, rightPos }) => ({
     position: 'absolute',
     top: '-1px',
-    left: '-1px',
+    ...(!rightPos && {
+        left: '-1px',
+    }),
+    ...(rightPos && {
+        right: '-1px',
+    }),
     width: `${containerWidth + 2}px`,
     height: 'calc(100% + 2px)',
     border: '1px solid #038C65 !important',
@@ -43,10 +48,12 @@ interface MSCellFormValuePropsType {
     title: string
     defaultValue?: string
     width?: number
+    containerXLimit?: number
+    cellXpos?: number
     onSubmit?: (data:unknown) => void
 }
 
-const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, onSubmit }:MSCellFormValuePropsType) => {
+const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, containerXLimit=0, cellXpos=0, onSubmit }:MSCellFormValuePropsType) => {
     
     const methods = useForm<SchemaType>({
         defaultValues: {
@@ -55,13 +62,15 @@ const MSCellFormValue = ({ id, type, title, defaultValue="", width=300, onSubmit
         resolver: yupResolver(InlineSchema), 
         mode: "onChange"
     });
+
+    const offsetXLimit = React.useMemo(() => width + cellXpos, [width, cellXpos])
     
     const onFormSubmit = (data:SchemaType) => {
         onSubmit?.(data.data)
     }
 
     return (
-        <Container containerWidth={width}>
+        <Container containerWidth={width} rightPos={offsetXLimit >= containerXLimit}>
             <FormProvider {...methods}>
                 <Form onSubmit={methods.handleSubmit(onFormSubmit)}>
                     <Box sx={{ width: '100%' }}>

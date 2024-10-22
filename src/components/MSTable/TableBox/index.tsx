@@ -30,12 +30,13 @@ interface TableBoxPropsType {
     data: any[]; // DATA OF THE TABLE
     render: (row:any) => IMSTblCell[] // RENDER FUNCTION FOR THE ROWS
     submenuItems: null | MenuItemType[] // SUB MENU ITEMS
-    containerWidth?: number; // CONTAINER WIDTH
-    containerHeight?: number; // CONTAINER HEIGHT
+    containerWidth?: number // CONTAINER WIDTH
+    containerHeight?: number // CONTAINER HEIGHT
+    containerXLimit?: number // CONTAINER X LIMIT
     actionSection?: (row: any) => React.ReactNode // ACTION SECTION
 }
 
-const TableBox = ({ headers, data, render, actionSection, containerWidth=0, containerHeight=0, rowHeight, submenuItems=null }:TableBoxPropsType) => {
+const TableBox = ({ headers, data, render, actionSection, containerWidth=0, containerHeight=0, rowHeight, submenuItems=null, containerXLimit=0 }: TableBoxPropsType) => {
 
     const { isDesktop, isTablet, isMobile } = useResponsive() // IDENTIFY THE CURRENT DEVICE SIZE
 
@@ -105,6 +106,7 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
                             action={actionSection && actionSection(row)}
                             items={submenuItems}
                             inputHeaderKeys={inputHeaderKeys}
+                            containerXLimit={containerXLimit}
                         />
                     })}
                 </TableBody>
