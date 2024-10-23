@@ -84,7 +84,7 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
         switch(type) {
           case "date":
             //trigger()
-            if (!isErr && triggerSubmit) triggerSubmit()
+            if (!isErr && inline && triggerSubmit) triggerSubmit()
             
             break
         }
