@@ -58,11 +58,12 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
     const [cellAsField, setCellAsField] = React.useState<null | IMSTblKeyInputType>(null) // INPUT INFORMATION BY CELLS
     const [lineCellBorder, setLineCellBorder] = React.useState<null | string>(null) // USED TO SHOW THE LINE CELL BORDER
     const [currentCellX, setCurrentCellX] = React.useState<number>(0) // USED TO SHOW THE LINE CELL BORDER
+    const [currentInputCellWidth, setCurrentInputCellWidth] = React.useState<number>(0) // USED TO SHOW THE LINE CELL BORDER
 
     const useMenu = React.useMemo(() => Boolean(items), [items]) // KNOW IF THE ROW HAS A SUB MENU
     const openSubMenu = React.useMemo(() => Boolean(mousePosition), [mousePosition]) // USE MOUSE POSITION TO KNOW IF THE SUB MENU IS OPEN
 
-    const currentInputCellWidth = React.useMemo(() => (Boolean(cellRef) && Boolean(cellRef.current))? cellRef.current?.clientWidth : 0, [cellRef]) // GET THE WIDTH OF THE CURRENT INPUT CELL
+    //const currentInputCellWidth = React.useMemo(() => (Boolean(cellRef) && Boolean(cellRef.current))? cellRef.current?.clientWidth : 0, [cellRef]) // GET THE WIDTH OF THE CURRENT INPUT CELL
 
     const subMenuRealPosition = React.useMemo<MousePositionType>(() => {
         if (!openSubMenu) return { x:0, y:0 } // IF THE SUB MENU IS NOT OPEN, RETURN A DEFAULT POSITION
@@ -125,6 +126,10 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                         className='hover-data-cell'
                         sx={{
                             position: 'relative',
+                            '&:hover': {
+                                border: '1px solid black !important',
+                                boxShadow: '0px 0px 16px 0px rgba(0,0,0,0.75)',
+                            },
                             ...(index == 0 && {
                                 borderLeft: '0px !important'
                             }),
@@ -146,6 +151,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                                 
                                 if(e) {
                                     setCurrentCellX(Math.floor(e.pageX))
+                                    setCurrentInputCellWidth(Math.round(e.currentTarget.clientWidth))
                                 }
                             }
                         }}

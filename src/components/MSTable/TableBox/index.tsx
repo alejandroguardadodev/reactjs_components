@@ -87,7 +87,15 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
     const defineHoverHeader = (value: string | null) => setHoverHead(value)
 
     return (
-        <TableContainer>
+        <TableContainer
+            sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: `${width}px`,
+                height: `${height}px`
+            }}
+        >
             <Table
                 size="medium"
                 stickyHeader
@@ -96,7 +104,7 @@ const TableBox = ({ headers, data, render, actionSection, containerWidth=0, cont
                 <EnhancedTableHead showAction={Boolean(actionSection)} headers={displayedHeads} hoverHead={hoverHead} updtateHeaders={updtateHeaders} setHoverHead={defineHoverHeader} />
                 <TableBody>
                     {/* DISPLAY ROWS */}
-                    {data && data.map((row, index) => {
+                    {data && data.slice(0, numberOfRows).map((row, index) => {
                         const [_row, id] = render(row)
 
                         const cells = orderCellsByHeader(_row)

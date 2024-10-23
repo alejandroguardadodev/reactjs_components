@@ -29,7 +29,7 @@ interface MSTablePropsType {
     actionSection?: (row: any) => React.ReactNode // FUNCTION TO RENDER ACTION SECTION [ like OPEN MENU, ERASE, EDIT ]
 }
 
-const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuItems=null }:MSTablePropsType) => {
+const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuItems=null }:MSTablePropsType) => {
 
     const { ref: tableContainerRef, width: tableContainerWidth, height: tableContainerHeight } = useResizeDetector()
 
@@ -48,7 +48,10 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
             }}
         >
             <Box>Toolbar</Box>
-            <Box ref={tableContainerRef} sx={{ flexGrow: 1 }}>
+            <Box ref={tableContainerRef} sx={{ 
+                flexGrow: 1,
+                position: 'relative',
+            }}>
                 <TableBox 
                     rowHeight={rowHeight}
                     containerWidth={tableContainerWidth} 

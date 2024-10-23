@@ -27,7 +27,7 @@ const MSCellValue = ({ value, showInputCell, inputCell, onClose, inputCellWidth=
             rowId={rowId}
             defaultValue={value} 
             type={inputCell?.inputType || 'text'} 
-            width={Math.max(inputCellWidth, 300)}
+            width={Math.max(150, inputCellWidth)}
             cellXpos={cellXpos}
             containerXLimit={containerXLimit}
             onSubmit={inputCell?.onSubmit}
