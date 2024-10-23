@@ -49,7 +49,7 @@ const Container = styled(Box, {
 
 interface MSCellFormValuePropsType {
     id: string
-    type: 'text' | 'number'
+    type: 'text' | 'number' | 'date'
     defaultValue?: string
     width?: number
     containerXLimit?: number
@@ -61,6 +61,8 @@ interface MSCellFormValuePropsType {
 
 const MSCellFormValue = ({ id, type, onClose, defaultValue="", width=300, containerXLimit=0, cellXpos=0, rowId="", onSubmit }:MSCellFormValuePropsType) => {
     
+    const formRef = React.useRef<HTMLFormElement>(null);
+
     const methods = useForm<SchemaType>({
         defaultValues: {
             data: defaultValue,
@@ -76,16 +78,18 @@ const MSCellFormValue = ({ id, type, onClose, defaultValue="", width=300, contai
             key: id,
             value: `${data.data}`.trim()
         }, rowId)
-
+        
         onClose?.()
     }
+
+    const triggerSubmit = () => { methods.handleSubmit(onFormSubmit)(); };    
 
     return (
         <Container containerWidth={width} rightPos={offsetXLimit >= containerXLimit}>
             <FormProvider {...methods}>
-                <Form onSubmit={methods.handleSubmit(onFormSubmit)}>
+                <Form ref={formRef} onSubmit={methods.handleSubmit(onFormSubmit)}>
                     <Box sx={{ width: '100%' }}>
-                        <MSInput id="data" type={type} placeholder={defaultValue} inline />
+                        <MSInput id="data" type={type} placeholder={defaultValue} defaultvalue={defaultValue} triggerSubmit={triggerSubmit} inline />
                     </Box>
                 </Form>
             </FormProvider>

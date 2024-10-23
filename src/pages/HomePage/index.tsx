@@ -68,7 +68,14 @@ const HomePage = () => {
         {
             key: 'date',
             label: 'Date',
+            // IMPLEMENT A RESPONSIVE SYSTEM ON EVERY COLUMN ----------
             hideOnMobileDevice: true,
+            // TO IDENTIFY THE USE OF AN INPUT FIELD IN THE CELL ------
+            inputType: IMSTableHeadInputType.DATE,
+            onSubmit: (data:IKeyValue, id?:string) => {
+                if (id) updateSingleData(id, data)
+            } 
+            // --------------------------------------------------------
         }
     ]
 

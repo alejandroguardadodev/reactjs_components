@@ -11,6 +11,8 @@ import {
 
 import NearbyErrorIcon from '@mui/icons-material/NearbyError'
 
+import InputDateBase from './InputDateBase'
+
 const FieldContainer = styled(Stack)(() => ({
   width: '100%' , 
   flexDirection: 'column',
@@ -51,18 +53,19 @@ const NomalInput = styled('input')(() => ({
 interface MSInputPropsType {
   id: string
   placeholder?: string
-  type?: "text" | "number"
+  type?: "text" | "number" | "date"
   label?: string
   inline?: boolean
   disabled?: boolean
   defaultvalue?: number | string 
+  triggerSubmit?: () => void
 }
 
-const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", placeholder="", type="text" }:MSInputPropsType) => {
+const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", placeholder="", type="text", triggerSubmit=undefined }:MSInputPropsType) => {
 
-  const [fieldvalue, setFieldvalue] = React.useState<number | string>(defaultvalue)
+  //const [fieldvalue, setFieldvalue] = React.useState<string>(`${defaultvalue}`)
 
-  const { register, setValue, watch, formState: { errors } } = useFormContext() 
+  const { register, setValue, watch, trigger, formState: { errors } } = useFormContext() 
 
   const isErr = React.useMemo(() => !!errors[id], [ errors, errors[id], id ])
   const errMessage = React.useMemo(():string => isErr? `${errors[id]!.message}` : '', [isErr, errors, id])
@@ -74,6 +77,33 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
 
     return "#206C65"
   }, [inline, isErr])
+
+  React.useEffect(() => {
+    const subscription = watch((value) => {
+      if (value)
+        switch(type) {
+          case "date":
+            //trigger()
+            if (!isErr && triggerSubmit) triggerSubmit()
+            
+            break
+        }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch, id, type])
+
+
+  const InputElement = React.useMemo<React.ReactNode>(() => {
+    switch(type) {
+
+      case "date":
+        return <InputDateBase id={id} value={`${defaultvalue}`} setValue={setValue} />
+
+      default:
+        return <NomalInput autoFocus={inline} className='input-component' id={`input-${id}`} disabled={disabled} type={type} placeholder={placeholder} {...register(id)} />
+    }
+  }, [type, id, disabled, setValue, register, placeholder, defaultvalue])
 
   return (
     <FieldContainer sx={{ ...(inline && { padding: '0px !important', margin: '0px !important' }) }}>
@@ -89,7 +119,8 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
                 <NearbyErrorIcon sx={{ color: '#400101', fontSize: '.9rem', paddingLeft: '4px' }} />
             </Tooltip>
         )}
-        <NomalInput autoFocus={inline} className='input-component' id={`input-${id}`} disabled={disabled} type={type} placeholder={placeholder} {...register(id)} />
+        
+        {InputElement}
 
       </InputContainer> 
 

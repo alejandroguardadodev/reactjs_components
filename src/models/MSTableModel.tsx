@@ -5,7 +5,8 @@ interface IKeyValue {
 
 export enum IMSTableHeadInputType {
     TEXT = "text",
-    NUMBER = "number"
+    NUMBER = "number",
+    DATE= "date"
 }
 
 export interface IMSTblKeyInputType {

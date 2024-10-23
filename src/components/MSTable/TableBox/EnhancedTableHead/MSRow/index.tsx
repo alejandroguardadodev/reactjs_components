@@ -138,7 +138,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                         }}
                         onDoubleClick={(e) => {
                             if (cellAsField) return 
-
+                            
                             var type: undefined | IMSTblKeyInputType;
                             if (type = inputHeaderKeys.find((h) => h.key == cell.key)) {
                                 setCellAsField(type)
