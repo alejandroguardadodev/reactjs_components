@@ -2,7 +2,7 @@ import React from 'react'
 
 import { 
     IMSTblKeyInputType 
-} from '../../../../../../models/MSTableModel'
+} from '../../../../../models/MSTableModel'
 
 import MSCellFormValue from './MSCellFormValue'
 

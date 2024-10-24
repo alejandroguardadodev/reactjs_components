@@ -5,7 +5,7 @@ import { styled } from '@mui/system'
 import {
     IMSTblCell,
     IMSTblKeyInputType
-} from '../../../../../models/MSTableModel';
+} from '../../../../models/MSTableModel';
 
 import {
     Menu,
@@ -129,8 +129,11 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                             '&:hover': {
                                 border: '1px solid black !important',
                                 boxShadow: '0px 0px 16px 0px rgba(0,0,0,0.75)',
+                                ...(index == 0 && lineCellBorder !== cell.key && {
+                                    borderLeft: '0px !important'
+                                })
                             },
-                            ...(index == 0 && {
+                            ...(index == 0 && { 
                                 borderLeft: '0px !important'
                             }),
                             ...(hoverHead == cell.key && {

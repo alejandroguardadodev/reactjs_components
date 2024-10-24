@@ -44,6 +44,8 @@ const dateToString = (date: DateObject) => {
 
 const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
 
+    const [date, setDate] = React.useState<string>("")
+
     const datevalue = React.useMemo(() => {
         if (value) {
             // if (value instanceof DateObject) return value
@@ -78,7 +80,11 @@ const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
                 format="MM/DD/YYYY"
                 className='input-component'
                 onChange={(date:DateObject) => {
-                    setValue(id, date?.isValid ? dateToString(date) : "", { shouldValidate: true })
+                    setDate(date?.isValid ? dateToString(date) : "")
+                }}
+                
+                onClose={() => {
+                    if (date && date.trim() !== "") setValue(id, date, { shouldValidate: true })
                 }}
             />
         </DateContainer>

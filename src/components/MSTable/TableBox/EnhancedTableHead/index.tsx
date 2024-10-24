@@ -19,13 +19,17 @@ interface EnhancedTableHeadPropsType {
     headers: IMSTblHead[] // headers: IMSTblHead[]
     hoverHead: string | null // CURRENT HOVER HEAD
     showAction?: boolean // SHOULD SHOW ACTION COLUMN
+    orderBy: string
+    order: 'asc' | 'desc'
+
     updtateHeaders: (hs:IMSTblHead[]) => void // UPDATE HEADERS CALLBACK
     setHoverHead: (value: string | null) => void // SET CURRENT HOVER HEAD CALLBACK
+    onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
 }
 
 const TYPE_CARD = 'CARD' // TO IDENTIFY CURRENT DRAG / DROP TYPE
 
-const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, showAction=false }:EnhancedTableHeadPropsType) => {
+const EnhancedTableHead = ({ headers, hoverHead, order, orderBy, updtateHeaders, setHoverHead, onRequestSort, showAction=false }:EnhancedTableHeadPropsType) => {
 
     // COPY OF THE HEADS TO MODIFY
     const [ heads, setHeads ] = React.useState<IMSTblHead[]>(headers)
@@ -87,6 +91,8 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
             <TableRow ref={drop}>
                 {heads.map((head, index) => (
                     <DragAndDropTableCell 
+                        order={order}
+                        orderBy={orderBy}
                         dragHover={hoverHead == head.key} 
                         hideLeftBorder={index == 0} 
                         key={head.key} 
@@ -94,7 +100,8 @@ const EnhancedTableHead = ({ headers, hoverHead, updtateHeaders, setHoverHead, s
                         findItem={FindHeader} 
                         moveItem={MoveHeader} 
                         hoverHeader={HoverHeader} 
-                        clearHoverHeader={ClearHoverHeader} 
+                        clearHoverHeader={ClearHoverHeader}
+                        onRequestSort={onRequestSort}
                     />
                 ))}
 

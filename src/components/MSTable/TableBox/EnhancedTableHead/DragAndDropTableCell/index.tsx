@@ -17,13 +17,16 @@ const CustomTableCell = styled(TableCell)(() => ({
 }))
 
 interface DragAndDropTableCellPropsType {
-    head: IMSTblHead, // CURRENT HEAD INFO
-    dragHover: boolean, // IS ANOTHER COLUMN DRAGED HOVER THE CURRENT COLUMN
-     
+    head: IMSTblHead // CURRENT HEAD INFO
+    dragHover: boolean // IS ANOTHER COLUMN DRAGED HOVER THE CURRENT COLUMN
+    orderBy: string
+    order: 'asc' | 'desc'
+
     moveItem: (key: string, to: number) => void // MOVE COLUMN TO NEW INDEX
     findItem: (key: string) => { index: number } // FINE COLUMN BY AN INDEX
     hoverHeader: (key: string) => void // SET COLUMN AS HOVERED
     clearHoverHeader: () => void // CLEAR HOVERED COLUMN
+    onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
 
     hideLeftBorder?: boolean, // HIDE LEFT BORDER
 }
@@ -36,7 +39,7 @@ interface Item {
 
 const TYPE_CARD = 'CARD'
 
-const DragAndDropTableCell = ({ head, dragHover, moveItem, findItem, hoverHeader, clearHoverHeader, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
+const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, hoverHeader, clearHoverHeader, onRequestSort, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
 
     // GET ORIGINAL INDEX
     const originalIndex = findItem(head.key).index
@@ -89,6 +92,8 @@ const DragAndDropTableCell = ({ head, dragHover, moveItem, findItem, hoverHeader
     // IF WE ARE DRAGGING, SET THE OPACITY TO 0.5
     const OPACITY = React.useMemo(() => isDragging ? 0.5 : 1, [isDragging])
 
+    const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
+
     return (
         <CustomTableCell
             ref={(node:ConnectableElement) => drag(drop(node))}
@@ -106,8 +111,9 @@ const DragAndDropTableCell = ({ head, dragHover, moveItem, findItem, hoverHeader
             }}
         >
             <TableSortLabel
-                active={false}
-                direction={'asc'}
+                active={orderBy === head.key}
+                direction={orderBy === head.key ? order : 'asc'}
+                onClick={createSortHandler(head.key)}
                 sx={{
                     width: '100%',
                     display: 'flex',

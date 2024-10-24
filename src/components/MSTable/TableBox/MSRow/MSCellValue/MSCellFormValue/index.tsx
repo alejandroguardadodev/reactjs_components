@@ -7,11 +7,11 @@ import { styled } from '@mui/system'
 import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { InlineSchema } from '../../../../../../../schemas'
+import { InlineSchema } from '../../../../../../schemas'
 
 import Box from "@mui/material/Box"
 
-import MSInput from '../../../../../../MSInput'
+import MSInput from '../../../../../MSInput'
 
 type SchemaType = yup.InferType<typeof InlineSchema>
 
