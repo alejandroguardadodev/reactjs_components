@@ -1,8 +1,10 @@
 import React from 'react'
+import update from 'immutability-helper'
 
 import {
     IMSTblHead,
-    IMSTblCell
+    IMSTblCell,
+    IMSTableHeadInputType
 } from '../../models/MSTableModel'
 
 import { 
@@ -13,6 +15,7 @@ import {
 import TableBox from "./TableBox"
 
 import { useResizeDetector } from 'react-resize-detector'
+import useResponsive from '../../hooks/useResponsive'
 
 import TableContext, { TableContextType } from '../../contexts/TableContext'
 
@@ -34,14 +37,44 @@ interface MSTablePropsType {
 
 const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuItems=null, defaultSort="" }:MSTablePropsType) => {
 
-    const { ref: tableContainerRef, width: tableContainerWidth, height: tableContainerHeight } = useResizeDetector()
+    // HOOKS ------------------------------------------------------------------------------------
+    const { 
+        ref: tableContainerRef, 
+        width: tableContainerWidth, 
+        height: tableContainerHeight
+    } = useResizeDetector() // GET THE WIDTH AND HEIGHT OF THE TABLE CONTAINER
+    const { isDesktop, isTablet, isMobile } = useResponsive() // IDENTIFY THE CURRENT DEVICE SIZE
 
-    const tableContainerXLimit = React.useMemo(() => Math.floor((tableContainerRef.current?.offsetLeft || 0) + (tableContainerWidth || 0)), [tableContainerRef.current?.offsetLeft, tableContainerWidth])
+    // USE MEMOS --------------------------------------------------------------------------------
+    const tableContainerXLimit = React.useMemo(
+        () => Math.floor((tableContainerRef.current?.offsetLeft || 0) + (tableContainerWidth || 0)), 
+        [tableContainerRef.current?.offsetLeft, tableContainerWidth]
+    ) // GET THE X LIMIT OF THE TABLE CONTAINER
 
+    // CALLBACKS --------------------------------------------------------------------------------
+    const CheckShowColumn = React.useCallback((header:IMSTblHead) => {
+        if (isMobile && header.hideOnMobileDevice) return false
+        else if (isTablet && header.hideOnTabletDevice) return false
+        else if (isDesktop && header.hideOnDesktopDevice) return false
+        
+        return true
+    }, [isDesktop, isTablet, isMobile])
+
+    // PREPARE CONTEXT --------------------------------------------------------------------------
     const [table, setTable] = React.useState<TableContextType>({
         heads: headers,
+        inputHeads: headers.filter((h) => Boolean(h.inputType) && Boolean(h.onSubmit)).map((h) => ({
+            key: h.key,
+            inputType: h.inputType || IMSTableHeadInputType.TEXT,
+            onSubmit: h.onSubmit
+        })),
+        displayedHeads: headers.filter((h) => CheckShowColumn(h)),
+        data,
+        hoverHeadKey: null,
+        render,
+        // UPDATE HEADER CELL WIDTH
         updateHeadWidth: (key: string, width: number) => {
-            console.log(key, width)
+            if (width <= 100) return
 
             setTable((table) => ({
                 ...table,
@@ -56,8 +89,40 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
                     return head
                 })
             }))
-        }
-    });
+        },
+        setHoverHead: (key: string | null) => {
+            setTable((table) => ({
+                ...table,
+                hoverHeadKey: key
+            }))
+        },
+        moveHead: (head, index, atIndex) => {
+            setTable((table) => update(table, {
+                heads: {
+                    $splice: [
+                        [index, 1],
+                        [atIndex, 0, head],
+                    ],
+                }
+            }))
+        },
+    })
+
+    // USE EFFECTS ------------------------------------------------------------------------------
+    React.useEffect(() => {
+        setTable((table) => ({
+            ...table,
+            displayedHeads: table.heads.filter((h) => CheckShowColumn(h)), // FILTER HEADS BY SCREEN SIZE
+        }))
+    }, [isDesktop, isTablet, isMobile, table.heads])
+
+    React.useEffect(() => {
+        setTable((table) => ({
+            ...table,
+            data: data
+        }))
+    }, [data])
+    // ------------------------------------------------------------------------------------------
     
     return (
         <TableContext.Provider value={table}>
@@ -81,9 +146,6 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
                         rowHeight={rowHeight}
                         containerWidth={tableContainerWidth} 
                         containerHeight={tableContainerHeight}
-                        headers={table.heads}
-                        data={data}
-                        render={render}
                         actionSection={actionSection}
                         submenuItems={submenuItems}
                         containerXLimit={tableContainerXLimit}

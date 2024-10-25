@@ -17,6 +17,8 @@ import {
     TableCell
 } from '@mui/material'
 
+import TableContext from '../../../../contexts/TableContext';
+
 import MSCellValue from './MSCellValue';
 
 const MenuListItemIcon = styled(ListItemIcon)(() => ({
@@ -52,6 +54,8 @@ interface MSRowPropsType {
 }
 
 const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXLimit=0, id="" }:MSRowPropsType) => {
+    const tableContext = React.useContext(TableContext)
+
     const cellRef = React.useRef<HTMLTableCellElement>(null) // GET THE APROPIATE CELL REF TO SHOW THE MENU
 
     const [mousePosition, setMousePosition] = React.useState<null | MousePositionType>(null) // USED FOR THE SUB MENU
@@ -100,6 +104,16 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
         };
     })
 
+    const GetCellWidth = React.useCallback((cellKey:string):number | undefined => {
+        if (tableContext?.heads) {
+            const head = tableContext.heads.find((head) => head.key === cellKey)
+            
+            if (head) return head.size
+        }
+
+        return undefined
+    }, [tableContext?.heads])
+
     return (
         <>
             <TableRow
@@ -119,13 +133,20 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                     }
                 }} 
             >
-                {data.filter((cell) => cell !== undefined).map((cell, index) => (
-                    <TableCell
+                {data.filter((cell) => cell !== undefined).map((cell, index) => {
+                    
+                    const cellWidth = GetCellWidth(cell.key)
+
+                    return <TableCell
                         key={`col-${cell.key}-${index}`}
                         ref={(Boolean(cellAsField) && cellAsField?.key == cell.key)? cellRef : null}
                         className='hover-data-cell'
                         sx={{
                             position: 'relative',
+                            ...(cellWidth && {
+                                width: `${cellWidth}px`,
+                                maxWidth: `${cellWidth}px`,
+                            }),
                             '&:hover': {
                                 border: '1px solid black !important',
                                 boxShadow: '0px 0px 16px 0px rgba(0,0,0,0.75)',
@@ -171,7 +192,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                             onClose={closeCellAsInput}
                         />
                     </TableCell>
-                ))}
+                })}
 
                 { action && (<TableCell
                     sx={{ 

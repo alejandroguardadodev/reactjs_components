@@ -44,11 +44,11 @@ const MSCellValue = ({ cellKey, value, showInputCell, inputCell, onClose, inputC
         if (tableContext?.heads) {
             const head = tableContext.heads.find((head) => head.key === cellKey)
             
-            if (head) return head.size
+            if (head && head.size) return head.size > 8 ? head.size - 8 : head.size
         }
 
         return undefined
-    }, [tableContext?.heads])
+    }, [tableContext, tableContext?.heads, cellKey])
     
     if (showInputCell && useCellAsInput) return (<>
         <MSCellFormValue 

@@ -1,11 +1,6 @@
 import React from 'react'
-import update from 'immutability-helper'
 
 import { useDrop } from 'react-dnd'
-
-import { 
-    IMSTblHead 
-} from '../../../../models/MSTableModel'
 
 import { 
     TableHead,
@@ -13,93 +8,74 @@ import {
     TableCell
 } from '@mui/material'
 
+import TableContext from '../../../../contexts/TableContext'
+
 import DragAndDropTableCell from './DragAndDropTableCell'
 
 interface EnhancedTableHeadPropsType {
-    headers: IMSTblHead[] // headers: IMSTblHead[]
-    hoverHead: string | null // CURRENT HOVER HEAD
-    showAction?: boolean // SHOULD SHOW ACTION COLUMN
     orderBy: string
     order: 'asc' | 'desc'
 
-    updtateHeaders: (hs:IMSTblHead[]) => void // UPDATE HEADERS CALLBACK
-    setHoverHead: (value: string | null) => void // SET CURRENT HOVER HEAD CALLBACK
     onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
+
+    showAction?: boolean // SHOULD SHOW ACTION COLUMN
 }
 
 const TYPE_CARD = 'CARD' // TO IDENTIFY CURRENT DRAG / DROP TYPE
 
-const EnhancedTableHead = ({ headers, hoverHead, order, orderBy, updtateHeaders, setHoverHead, onRequestSort, showAction=false }:EnhancedTableHeadPropsType) => {
+const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:EnhancedTableHeadPropsType) => {
 
-    // COPY OF THE HEADS TO MODIFY
-    const [ heads, setHeads ] = React.useState<IMSTblHead[]>(headers)
+    // CONTEXT ----------------------------------------------------------------------------------
+    const tableContext = React.useContext(TableContext)
+    
+    // DRAG AND DROP ----------------------------------------------------------------------------
+    const [, drop] = useDrop(() => ({ accept: TYPE_CARD }))
 
-    // FIND HEADER BY KEY 
+    // USE STATE --------------------------------------------------------------------------------
+
+    // CALLBACKS --------------------------------------------------------------------------------
     const FindHeader = React.useCallback(
         (key: string) => {
-            const head = heads.filter((h) => `${h.key}` === key)[0]
+            if (tableContext == null) return { head: null, index: -1 }
+
+            const head = tableContext.heads.filter((h) => `${h.key}` === key)[0]
 
             return {
                 head,
-                index: heads.indexOf(head),
+                index: tableContext.heads.indexOf(head),
             }
-        }, [heads],
-    )
+        }, [tableContext?.heads],
+    ) // FIND HEADER BY KEY
+    
+    // ACTIONS ----------------------------------------------------------------------------------
+    const ClearHoverHeader = () => tableContext?.setHoverHead(null) 
 
-    // NO HOVER HEAD
-    const ClearHoverHeader = () => setHoverHead(null)
-
-    // MOVE HEADER TO NEW INDEX 
     const MoveHeader = React.useCallback(
         (key: string, atIndex: number) => {
             const { head, index } = FindHeader(key)
 
-            setHeads(
-                update(heads, {
-                    $splice: [
-                        [index, 1],
-                        [atIndex, 0, head],
-                    ],
-            }))
-        }, [FindHeader, heads, setHeads],
+            if (head == null) return
+            
+            tableContext?.moveHead(head, index, atIndex)
+
+        }, [FindHeader, tableContext],
     )
-
-    // SET HOVER HEADER
-    const HoverHeader = (key: string) => {
-        setHoverHead(key)
-
-        // setHeads(update(heads, {
-        //     [index]: {
-        //         dropHover: {
-        //             $set: true
-        //         },
-        //     }
-        // }))
-
-    }
-
-    // ACTIVATE HEADER AND DEFINE DROP / DRAG KEY
-    const [, drop] = useDrop(() => ({ accept: TYPE_CARD }))
-
-    // UPDATE ORIGINAL HEADERS EVERY TIME HEADERS DOES
-    React.useEffect(() => {
-        updtateHeaders(heads)
-    }, [heads])
+    
+    // ------------------------------------------------------------------------------------------
 
     return (
         <TableHead>
             <TableRow ref={drop}>
-                {heads.map((head, index) => (
+                {tableContext && tableContext.displayedHeads.map((head, index) => (
                     <DragAndDropTableCell 
                         order={order}
                         orderBy={orderBy}
-                        dragHover={hoverHead == head.key} 
+                        dragHover={tableContext.hoverHeadKey == head.key} 
                         hideLeftBorder={index == 0} 
                         key={head.key} 
                         head={head} 
                         findItem={FindHeader} 
                         moveItem={MoveHeader} 
-                        hoverHeader={HoverHeader} 
                         clearHoverHeader={ClearHoverHeader}
                         onRequestSort={onRequestSort}
                     />

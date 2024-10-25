@@ -45,7 +45,6 @@ interface DragAndDropTableCellPropsType {
 
     moveItem: (key: string, to: number) => void // MOVE COLUMN TO NEW INDEX
     findItem: (key: string) => { index: number } // FINE COLUMN BY AN INDEX
-    hoverHeader: (key: string) => void // SET COLUMN AS HOVERED
     clearHoverHeader: () => void // CLEAR HOVERED COLUMN
     onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
 
@@ -60,49 +59,47 @@ interface Item {
 
 const TYPE_CARD = 'CARD'
 
-const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, hoverHeader, clearHoverHeader, onRequestSort, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
+const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, clearHoverHeader, onRequestSort, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
 
-    const { ref: cellRef, width: cellWidth } = useResizeDetector()
-
+    // CONTEXT ----------------------------------------------------------------------------------
     const tableContext = React.useContext(TableContext)
+    
+    // USE MEMO ---------------------------------------------------------------------------------
+    const OriginalIndex = React.useMemo(() => findItem(head.key).index, [head.key, findItem])
 
-    // GET ORIGINAL INDEX
-    const originalIndex = findItem(head.key).index
+    // USE HOOKS --------------------------------------------------------------------------------
+    const { ref: cellRef, width: cellWidth } = useResizeDetector() // GET CURRENT CELL WIDTH
 
-    // DRAG INFORMATION FUNCTION
+    // DRAG AND DROP ----------------------------------------------------------------------------
     const [{ isDragging }, drag] = useDrag(
         () => ({
             type: TYPE_CARD,
-            item: { id: head.key, originalIndex }, // LINKED INDEX WITH KEY
+            item: { id: head.key, OriginalIndex }, // LINKED INDEX WITH KEY
             collect: (monitor) => ({
                 isDragging: monitor.isDragging(), // IDENTIFY IF IS DRAGGING
             }),
             end: (item, monitor) => {
-                const { id: droppedId, originalIndex } = item // GET ITEM ID [KEY] AND INDEX
+                const { id: droppedId, OriginalIndex: OIndex } = item // GET ITEM ID [KEY] AND INDEX
 
                 const didDrop = monitor.didDrop() // IDENTIFY IF DROPPED
 
                 clearHoverHeader() // IF WE HAVE FINESHED DRAGGING, CLEAR HOVERED COLUMN
 
                 if (!didDrop) {
-                    moveItem(droppedId, originalIndex) // IF WE HAVE FINISHED DRAGGING AND DID NOT DROP, MOVE TO ORIGINAL INDEX
+                    moveItem(droppedId, OIndex) // IF WE HAVE FINISHED DRAGGING AND DID NOT DROP, MOVE TO ORIGINAL INDEX
                 }
             },
         }),
-        [head.key, originalIndex, moveItem],
+        [head.key, OriginalIndex, moveItem],
     )
 
-    // DROP INFORMATION FUNCTION
-    /**
-     * DROP WORKS AS CLIENT SIDE - CHECKING IF ANOTHER "CARD" IS ABOVE US
-     */
     const [, drop] = useDrop(
         () => ({
             accept: TYPE_CARD,
           
             //hover({ id: draggedId }: Item) {
             hover() {
-                hoverHeader(head.key) // IF WE ARE HOVERING OVER ANOTHER COLUMN, SET IT AS HOVERED
+                tableContext?.setHoverHead(head.key) // IF WE ARE HOVERING OVER ANOTHER COLUMN, SET IT AS HOVERED
             },
             drop({ id: draggedId }: Item) {
                 if (draggedId !== head.key) { // IF WE HAVE DROPPED ON ANOTHER COLUMN, MOVE IT TO THAT COLUMN
@@ -114,11 +111,10 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
         [findItem, moveItem],
     )
 
-    // IF WE ARE DRAGGING, SET THE OPACITY TO 0.5
+    // PROPERTIES / USEMEMO ---------------------------------------------------------------------
     const OPACITY = React.useMemo(() => isDragging ? 0.5 : 1, [isDragging])
 
-    const useCellWidth = React.useMemo(() => Boolean(head.size), [head.size])
-
+    // ACTIONS ----------------------------------------------------------------------------------
     const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
 
     const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
@@ -143,6 +139,8 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
         document.body.addEventListener("mouseup", onMouseUp, { once: true })
     }
 
+    // ------------------------------------------------------------------------------------------
+
     return (
         <CustomTableCell
             ref={cellRef}
@@ -158,9 +156,7 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
                     borderLeft: `${hideLeftBorder? 2 : 3}px solid #038C65 !important`
                 }),
                 position: 'relative',
-                ...(useCellWidth && {
-                    width: `${head.size}px`,
-                })
+                
             }}
         >
             <TableSortLabel

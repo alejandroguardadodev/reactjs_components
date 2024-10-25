@@ -44,7 +44,7 @@ const Container = styled(Box, {
     zIndex: '1000',
     boxShadow: '0px 0px 15px -6px rgba(0,0,0,0.6)',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
 }))
 
 interface MSCellFormValuePropsType {
