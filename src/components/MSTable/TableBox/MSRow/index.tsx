@@ -160,6 +160,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                         }}
                     >
                         <MSCellValue 
+                            cellKey={cell.key}
                             value={cell.value} 
                             showInputCell={Boolean(cellAsField) && cellAsField?.key == cell.key} 
                             inputCell={cellAsField} 

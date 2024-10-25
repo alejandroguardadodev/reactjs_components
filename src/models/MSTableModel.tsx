@@ -19,6 +19,7 @@ export interface IMSTblHead {
     key: string; // ID OF EVERY CELL
     label: string; // HEADER TEXT
     inputType?: IMSTableHeadInputType;
+    size?: number;
     hideOnMobileDevice?: boolean;
     hideOnTabletDevice?: boolean;
     hideOnDesktopDevice?: boolean;

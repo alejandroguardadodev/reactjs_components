@@ -54,7 +54,9 @@ const HomePage = () => {
             inputType: IMSTableHeadInputType.TEXT,
             onSubmit: (data:IKeyValue, id?:string) => {
                 if (id) updateSingleData(id, data)
-            } 
+            }, 
+            // DEFAULT HEADER SIZE ------------------------------------
+            size: 200,
             // --------------------------------------------------------
         },
         {

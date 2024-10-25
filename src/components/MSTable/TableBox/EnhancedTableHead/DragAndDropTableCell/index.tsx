@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { useResizeDetector } from 'react-resize-detector'
 import { ConnectableElement, useDrag, useDrop } from 'react-dnd'
 import { styled } from '@mui/system'
 
@@ -12,8 +13,28 @@ import {
     IMSTblHead 
 } from '../../../../../models/MSTableModel'
 
+import TableContext from '../../../../../contexts/TableContext'
+
 const CustomTableCell = styled(TableCell)(() => ({
     transition: 'all .15s ease-in-out'
+}))
+
+const DragNDropCell = styled('button')(() => ({
+    position: 'absolute',
+    top: 0,
+    right: '-5px',
+    width: '10px',
+    height: '100%',
+    borderRadius: '0px',
+    padding: 0,
+    margin: 0,
+    border: 'none',
+    background: 'transparent',
+    transition: 'all .15s ease-in-out',
+    '&:hover': {
+        background: '#038C65',
+        cursor: 'e-resize'
+    }
 }))
 
 interface DragAndDropTableCellPropsType {
@@ -40,6 +61,10 @@ interface Item {
 const TYPE_CARD = 'CARD'
 
 const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, hoverHeader, clearHoverHeader, onRequestSort, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
+
+    const { ref: cellRef, width: cellWidth } = useResizeDetector()
+
+    const tableContext = React.useContext(TableContext)
 
     // GET ORIGINAL INDEX
     const originalIndex = findItem(head.key).index
@@ -92,11 +117,35 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     // IF WE ARE DRAGGING, SET THE OPACITY TO 0.5
     const OPACITY = React.useMemo(() => isDragging ? 0.5 : 1, [isDragging])
 
+    const useCellWidth = React.useMemo(() => Boolean(head.size), [head.size])
+
     const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
+
+    const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
+        
+        const startSize = Math.floor(cellWidth || 0)
+        const startPosition = { x: mouseDownEvent.pageX || 0 }
+        console.log(startSize)
+        const onMouseMove = (mouseMoveEvent: MouseEvent) => {
+            // setSize(currentSize => ({ 
+            //     x: startSize.x - startPosition.x + mouseMoveEvent.pageX, 
+            //     y: startSize.y - startPosition.y + mouseMoveEvent.pageY 
+            // }));
+
+            tableContext?.updateHeadWidth(head.key, startSize - startPosition.x + mouseMoveEvent.pageX)
+        }
+    
+        function onMouseUp() {
+            document.body.removeEventListener("mousemove", onMouseMove)
+        }
+      
+        document.body.addEventListener("mousemove", onMouseMove)
+        document.body.addEventListener("mouseup", onMouseUp, { once: true })
+    }
 
     return (
         <CustomTableCell
-            ref={(node:ConnectableElement) => drag(drop(node))}
+            ref={cellRef}
             key={head.key}
             align="left"
             padding='none'
@@ -108,9 +157,14 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
                 ...(dragHover && {
                     borderLeft: `${hideLeftBorder? 2 : 3}px solid #038C65 !important`
                 }),
+                position: 'relative',
+                ...(useCellWidth && {
+                    width: `${head.size}px`,
+                })
             }}
         >
             <TableSortLabel
+                ref={(node:ConnectableElement) => drag(drop(node))}
                 active={orderBy === head.key}
                 direction={orderBy === head.key ? order : 'asc'}
                 onClick={createSortHandler(head.key)}
@@ -125,6 +179,7 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
             >
                 {head.label}
             </TableSortLabel>
+            <DragNDropCell onMouseDown={handleMouseDown} />
         </CustomTableCell>
     )
 }
