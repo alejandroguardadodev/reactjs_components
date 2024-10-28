@@ -14,6 +14,7 @@ import {
 } from "@mui/material"
 
 import TableBox from "./TableBox"
+import EnhancedTableToolbar from './EnhancedTableToolbar'
 
 import { useResizeDetector } from 'react-resize-detector'
 import useResponsive from '../../hooks/useResponsive'
@@ -149,7 +150,9 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
                     boxShadow: '0px 0px 20px -10px rgba(0,0,0,0.6)'
                 }}
             >
-                <Box>Toolbar</Box>
+                <Box>
+                    <EnhancedTableToolbar title='Test Table' />
+                </Box>
                 <Box ref={tableContainerRef} sx={{ 
                     flexGrow: 1,
                     position: 'relative',
