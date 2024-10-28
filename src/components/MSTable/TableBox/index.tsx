@@ -24,9 +24,11 @@ interface MenuItemType {
 }
 
 interface TableBoxPropsType {
-    rowHeight: number // ROW HEIGHT
     defaultSort: string // DEFAULT SORT COLUMN
     submenuItems: null | MenuItemType[] // SUB MENU ITEMS
+    numberOfRows: number // NUMBER OF ROWS
+    page: number 
+
     containerWidth?: number // CONTAINER WIDTH
     containerHeight?: number // CONTAINER HEIGHT
     containerXLimit?: number // CONTAINER X LIMIT
@@ -48,7 +50,7 @@ function getComparator<Key extends keyof any>(order: 'asc' | 'desc', orderBy: Ke
       : (a, b) => -descendingComparator(a, b, orderBy);
   }
 
-const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeight=0, rowHeight, submenuItems=null, containerXLimit=0 }: TableBoxPropsType) => {
+const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeight=0, page, submenuItems=null, containerXLimit=0, numberOfRows }: TableBoxPropsType) => {
 
     // CONTEXT ----------------------------------------------------------------------------------
     const tableContext = React.useContext(TableContext)
@@ -61,16 +63,18 @@ const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeigh
     const TableContainerWidth = React.useMemo(() => Math.floor(containerWidth), [containerWidth]) // CONTAINER WIDTH
     const TableContainerHeight = React.useMemo(() => Math.floor(containerHeight), [containerHeight]) // CONTAINER HEIGHT
 
-    const NumberOfRows = React.useMemo(() => Math.floor(TableContainerHeight / rowHeight), [TableContainerHeight, rowHeight]) // NUMBER OF ROWS BY SPACE
     //const showActionHead = React.useMemo(() => Boolean(actionSection), [actionSection]) // CHECK IF THE ACTION SECTION IS ENABLED
     
     const VisibleRows = React.useMemo(
         () => {
-            if (tableContext?.data) 
-                return [...tableContext.data].sort(getComparator(order, orderBy))
+            if (tableContext?.data) {
+                const start = page * numberOfRows
+                
+                return [...tableContext.data].sort(getComparator(order, orderBy)).slice(start, start + numberOfRows)
+            }
 
             return []
-        }, [order, orderBy, tableContext?.data],
+        }, [order, orderBy, tableContext?.data, page, numberOfRows],
     )
 
     // ACTIONS ----------------------------------------------------------------------------------
@@ -115,7 +119,7 @@ const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeigh
                 />
                 <TableBody>
                     {/* DISPLAY ROWS */}
-                    {VisibleRows && VisibleRows.slice(0, NumberOfRows).map((row, index) => {
+                    {VisibleRows && VisibleRows.map((row, index) => {
                         if (tableContext == null) return
 
                         const [_row, id] = tableContext.render(row)

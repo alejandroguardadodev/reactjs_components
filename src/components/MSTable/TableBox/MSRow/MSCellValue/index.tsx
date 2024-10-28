@@ -17,8 +17,8 @@ const DivCell = styled('div', {
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     ...(cellWidth && {
-        // width: `${cellWidth}px`,
-        // maxWidth: `${cellWidth}px`,
+        width: `${cellWidth}px`,
+        maxWidth: `${cellWidth}px`,
     })
 }))
 

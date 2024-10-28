@@ -32,6 +32,14 @@ const Container = styled(Box)(() => ({
     alignItems: 'center'
 }))
 
+const TableContainer = styled(Box)(({ theme }) => ({
+    width: '800px', 
+    height: '700px',
+    [theme.breakpoints.down('md')]: {
+        width: '90%',
+    }
+}))
+
 // USED TO CREATE A SUB MENU FOR EVEY MENU ITEM
 const SUBMENU_ITEMS = [
     {
@@ -84,7 +92,7 @@ const HomePage = () => {
 
     return (
         <Container>
-            <Box sx={{ width: '800px', height: '700px' }}>
+            <TableContainer>
                 <MSTable 
                     headers={TBL_HEADERS} 
                     data={data} 
@@ -96,7 +104,7 @@ const HomePage = () => {
                     }}
                     submenuItems={SUBMENU_ITEMS}
                 />
-            </Box>
+            </TableContainer>
         </Container>
     )
 }

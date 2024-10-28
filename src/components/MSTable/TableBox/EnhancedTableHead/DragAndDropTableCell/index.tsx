@@ -67,7 +67,6 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     const tableContext = React.useContext(TableContext)
     
     // USE STATE --------------------------------------------------------------------------------
-    const [cellHeadWidth, setCellHeadWidth] = React.useState<number | undefined>(head.size)
 
     // USE MEMO ---------------------------------------------------------------------------------
     const OriginalIndex = React.useMemo(() => findItem(head.key).index, [head.key, findItem])
@@ -127,31 +126,6 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     // ACTIONS ----------------------------------------------------------------------------------
     const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
 
-
-    // const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
-        
-    //     updateHeadCellPosX(mouseDownEvent.pageX)
-        
-    //     const startSize = Math.floor(cellWidth || 0)
-    //     const startPosition = { x: mouseDownEvent.pageX || 0 }
-        
-    //     const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-    //         //tableContext?.updateHeadWidth(head.key, startSize - startPosition.x + mouseMoveEvent.pageX)
-    //         //setCellHeadWidth(startSize - startPosition.x + mouseMoveEvent.pageX)
-
-    //         updateHeadCellPosX(Math.floor(mouseMoveEvent.clientX))
-    //     }
-    
-    //     function onMouseUp() {
-    //         document.body.removeEventListener("mousemove", onMouseMove)
-            
-    //         updateHeadCellPosX(null)
-    //     }
-      
-    //     document.body.addEventListener("mousemove", onMouseMove)
-    //     document.body.addEventListener("mouseup", onMouseUp, { once: true })
-    // }
-
     // ------------------------------------------------------------------------------------------
 
     return (
@@ -162,9 +136,9 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
             padding='none'
             sx={{
                 opacity: `${OPACITY}`,
-                ...(cellHeadWidth && {
-                    width: `${cellHeadWidth}px`,
-                    maxWidth: `${cellHeadWidth}px`,
+                ...(HeadCellWidth && {
+                    width: `${HeadCellWidth}px`,
+                    maxWidth: `${HeadCellWidth}px`,
                 }),
                 ...(hideLeftBorder && {
                     borderLeft: '0px !important'

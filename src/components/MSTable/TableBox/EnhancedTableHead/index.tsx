@@ -23,9 +23,9 @@ const HeadBlinkCell = styled('span', {
     top: 0, // Adjust for centering
     width: 8, 
     height: '100%', 
-    backgroundColor: 'red',
     pointerEvents: 'none',
     zIndex: 1000,
+    background: '#038C65',
 }))
 
 interface IChangeColumnSizeType {
@@ -63,6 +63,8 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
     // USE STATE --------------------------------------------------------------------------------
     const [isResizing, setIsResizing] = React.useState(false)
     const [headCellPosX, setHeadCellPosX] = React.useState<number>(0)
+    const [headCellPagePosX, setHeadCellPagePosX] = React.useState<number>(0)
+
     const [InfoColumnResize, setInfoColumnResize] = React.useState<IChangeColumnSizeType | null>(null)
 
     // USE MEMO ---------------------------------------------------------------------------------
@@ -98,6 +100,8 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
     const createHandleMouseDown = (cellRef: React.RefObject<HTMLTableCellElement>, key: string, index: number) => {
         return (e: React.MouseEvent<HTMLDivElement>) => {
 
+            const startPosition = e.clientX
+
             const startCellWidth = Math.floor(cellRef.current?.offsetWidth || 0)
 
             const cellRectLeft = Math.floor(cellRef.current?.getBoundingClientRect().left || 0)
@@ -105,14 +109,13 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
             const cellLeftLimit = cellRectLeft + SMALLEST_CELL_SIZE
             const cellRightLimit = cellRectLeft + BIGGEST_CELL_SIZE
 
-            const rectX= cellRef.current?.getBoundingClientRect().x
-
-            setHeadCellPosX(e.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
-            const startPosition = e.clientX
+            setHeadCellPosX(startPosition - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
     
             const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-                if (mouseMoveEvent.clientX > cellLeftLimit && mouseMoveEvent.clientX < cellRightLimit) 
+                if (mouseMoveEvent.clientX > cellLeftLimit && mouseMoveEvent.clientX < cellRightLimit) {
+                    setHeadCellPagePosX(mouseMoveEvent.pageX)
                     setHeadCellPosX(mouseMoveEvent.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+                }
             }
         
             function onMouseUp() {
@@ -122,11 +125,9 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
                 setInfoColumnResize({
                     key,
                     index,
-                    startWidt: startCellWidth,
+                    startWidt: Math.round(startCellWidth),
                     startPosition,
                 })
-                // tableContext?.updateHeadWidth(key, startCellWidth - startPosition.x + headCellPosX)
-                // tableContext?.updateHeadWidth(key, startCellWidth + newSizeToAdd)
             }
           
             setIsResizing(true)
@@ -139,15 +140,18 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
     React.useEffect(() => {
         if (!InfoColumnResize) return
 
-        const { key, index, startWidt, startPosition } = InfoColumnResize
+        const { key, startWidt, startPosition } = InfoColumnResize
 
-        const newSizeToAdd = startPosition - Math.round(headCellPosX)
-        console.log('headCellPosX',Math.round(headCellPosX))
-        console.log(key, 'startCellWidth + newSizeToAdd', startWidt + newSizeToAdd)
+        const movement = Math.round(headCellPagePosX) - startPosition
+        const newSize = startWidt + movement
+
+        tableContext?.updateHeadWidth(key, newSize)
 
         setInfoColumnResize(null)
+        setHeadCellPagePosX(0)
+        setHeadCellPosX(0)
 
-    }, [InfoColumnResize, headCellPosX])
+    }, [InfoColumnResize, headCellPosX, tableContext])
 
     // ------------------------------------------------------------------------------------------
 

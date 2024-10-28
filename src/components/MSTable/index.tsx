@@ -9,7 +9,8 @@ import {
 
 import { 
     Box,
-    Stack
+    Stack,
+    TablePagination
 } from "@mui/material"
 
 import TableBox from "./TableBox"
@@ -35,7 +36,7 @@ interface MSTablePropsType {
     actionSection?: (row: any) => React.ReactNode // FUNCTION TO RENDER ACTION SECTION [ like OPEN MENU, ERASE, EDIT ]
 }
 
-const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuItems=null, defaultSort="" }:MSTablePropsType) => {
+const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuItems=null, defaultSort="" }:MSTablePropsType) => {
 
     // HOOKS ------------------------------------------------------------------------------------
     const { 
@@ -45,11 +46,16 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
     } = useResizeDetector() // GET THE WIDTH AND HEIGHT OF THE TABLE CONTAINER
     const { isDesktop, isTablet, isMobile } = useResponsive() // IDENTIFY THE CURRENT DEVICE SIZE
 
+    // USE STATES -------------------------------------------------------------------------------
+    const [page, setPage] = React.useState(0);
+
     // USE MEMOS --------------------------------------------------------------------------------
     const tableContainerXLimit = React.useMemo(
         () => Math.floor((tableContainerRef.current?.offsetLeft || 0) + (tableContainerWidth || 0)), 
         [tableContainerRef.current?.offsetLeft, tableContainerWidth]
     ) // GET THE X LIMIT OF THE TABLE CONTAINER
+
+    const NumberOfRows = React.useMemo(() => Math.floor((tableContainerHeight || 0) / rowHeight), [tableContainerHeight, rowHeight]) // NUMBER OF ROWS BY SPACE
 
     // CALLBACKS --------------------------------------------------------------------------------
     const CheckShowColumn = React.useCallback((header:IMSTblHead) => {
@@ -111,6 +117,9 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
         }))
     })
 
+    // ACTIONS ----------------------------------------------------------------------------------
+    const handleChangePage = (event: unknown, newPage: number) => { setPage(newPage); }
+
     // USE EFFECTS ------------------------------------------------------------------------------
     React.useEffect(() => {
         setTable((table) => ({
@@ -146,16 +155,26 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
                     position: 'relative',
                 }}>
                     <TableBox 
-                        rowHeight={rowHeight}
                         containerWidth={tableContainerWidth} 
                         containerHeight={tableContainerHeight}
                         actionSection={actionSection}
                         submenuItems={submenuItems}
                         containerXLimit={tableContainerXLimit}
                         defaultSort={defaultSort}
+                        page={page}
+                        numberOfRows={NumberOfRows}
                     />
                 </Box>
-                <Box>Pagination</Box>
+                <Box>
+                    <TablePagination
+                        rowsPerPageOptions={[]}
+                        component="div"
+                        count={data.length}
+                        rowsPerPage={NumberOfRows}
+                        page={page}
+                        onPageChange={handleChangePage}
+                    />
+                </Box>
             </Stack>
         </TableContext.Provider>
     )
