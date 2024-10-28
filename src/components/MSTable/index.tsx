@@ -71,23 +71,22 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
         displayedHeads: headers.filter((h) => CheckShowColumn(h)),
         data,
         hoverHeadKey: null,
+        mousePosXResize: null,
         render,
         // UPDATE HEADER CELL WIDTH
         updateHeadWidth: (key: string, width: number) => {
             if (width <= 100) return
 
-            setTable((table) => ({
-                ...table,
-                heads: table.heads.map((head) => {
-                    if (head.key === key) {
-                        return {
-                            ...head,
-                            size: width
+            const index = table.heads.findIndex((h) => h.key === key)
+
+            setTable((table) => update(table, {
+                heads: {
+                    [index]: {
+                        size: {
+                            $set: width
                         }
                     }
-
-                    return head
-                })
+                }
             }))
         },
         setHoverHead: (key: string | null) => {
@@ -106,6 +105,10 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=38, submenuIt
                 }
             }))
         },
+        setMousePosXResize: (value) => setTable((table) => ({
+            ...table,
+            mousePosXResize: value
+        }))
     })
 
     // USE EFFECTS ------------------------------------------------------------------------------

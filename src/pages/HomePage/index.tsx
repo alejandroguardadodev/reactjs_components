@@ -41,7 +41,6 @@ const SUBMENU_ITEMS = [
 ]
 
 const HomePage = () => {
-
     // GET THE TEST DATA FROM THE HOOK AND THE FUNCTION TO RENDER THE DATA ON THE TABLE
     const { data, renderDataOnTbl, updateSingleData, convertToDataType } = useTestData()
 
@@ -80,6 +79,8 @@ const HomePage = () => {
             // --------------------------------------------------------
         }
     ]
+
+    
 
     return (
         <Container>

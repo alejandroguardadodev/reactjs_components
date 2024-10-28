@@ -6,7 +6,8 @@ import { styled } from '@mui/system'
 
 import {
     TableCell,
-    TableSortLabel
+    TableSortLabel,
+    Box
 } from '@mui/material'
 
 import { 
@@ -19,7 +20,7 @@ const CustomTableCell = styled(TableCell)(() => ({
     transition: 'all .15s ease-in-out'
 }))
 
-const DragNDropCell = styled('button')(() => ({
+const DragNDropCell = styled(Box)(() => ({
     position: 'absolute',
     top: 0,
     right: '-5px',
@@ -47,6 +48,7 @@ interface DragAndDropTableCellPropsType {
     findItem: (key: string) => { index: number } // FINE COLUMN BY AN INDEX
     clearHoverHeader: () => void // CLEAR HOVERED COLUMN
     onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
+    handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void
 
     hideLeftBorder?: boolean, // HIDE LEFT BORDER
 }
@@ -59,13 +61,17 @@ interface Item {
 
 const TYPE_CARD = 'CARD'
 
-const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, clearHoverHeader, onRequestSort, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
+const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, clearHoverHeader, onRequestSort, handleMouseDown, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
 
     // CONTEXT ----------------------------------------------------------------------------------
     const tableContext = React.useContext(TableContext)
     
+    // USE STATE --------------------------------------------------------------------------------
+    const [cellHeadWidth, setCellHeadWidth] = React.useState<number | undefined>(head.size)
+
     // USE MEMO ---------------------------------------------------------------------------------
     const OriginalIndex = React.useMemo(() => findItem(head.key).index, [head.key, findItem])
+    const HeadCellWidth = React.useMemo(() => head.size, [head.size])
 
     // USE HOOKS --------------------------------------------------------------------------------
     const { ref: cellRef, width: cellWidth } = useResizeDetector() // GET CURRENT CELL WIDTH
@@ -117,27 +123,29 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     // ACTIONS ----------------------------------------------------------------------------------
     const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
 
-    const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
+    // const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
         
-        const startSize = Math.floor(cellWidth || 0)
-        const startPosition = { x: mouseDownEvent.pageX || 0 }
-        console.log(startSize)
-        const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-            // setSize(currentSize => ({ 
-            //     x: startSize.x - startPosition.x + mouseMoveEvent.pageX, 
-            //     y: startSize.y - startPosition.y + mouseMoveEvent.pageY 
-            // }));
+    //     updateHeadCellPosX(mouseDownEvent.pageX)
+        
+    //     const startSize = Math.floor(cellWidth || 0)
+    //     const startPosition = { x: mouseDownEvent.pageX || 0 }
+        
+    //     const onMouseMove = (mouseMoveEvent: MouseEvent) => {
+    //         //tableContext?.updateHeadWidth(head.key, startSize - startPosition.x + mouseMoveEvent.pageX)
+    //         //setCellHeadWidth(startSize - startPosition.x + mouseMoveEvent.pageX)
 
-            tableContext?.updateHeadWidth(head.key, startSize - startPosition.x + mouseMoveEvent.pageX)
-        }
+    //         updateHeadCellPosX(Math.floor(mouseMoveEvent.clientX))
+    //     }
     
-        function onMouseUp() {
-            document.body.removeEventListener("mousemove", onMouseMove)
-        }
+    //     function onMouseUp() {
+    //         document.body.removeEventListener("mousemove", onMouseMove)
+            
+    //         updateHeadCellPosX(null)
+    //     }
       
-        document.body.addEventListener("mousemove", onMouseMove)
-        document.body.addEventListener("mouseup", onMouseUp, { once: true })
-    }
+    //     document.body.addEventListener("mousemove", onMouseMove)
+    //     document.body.addEventListener("mouseup", onMouseUp, { once: true })
+    // }
 
     // ------------------------------------------------------------------------------------------
 
@@ -149,6 +157,10 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
             padding='none'
             sx={{
                 opacity: `${OPACITY}`,
+                ...(cellHeadWidth && {
+                    width: `${cellHeadWidth}px`,
+                    maxWidth: `${cellHeadWidth}px`,
+                }),
                 ...(hideLeftBorder && {
                     borderLeft: '0px !important'
                 }),
@@ -156,7 +168,6 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
                     borderLeft: `${hideLeftBorder? 2 : 3}px solid #038C65 !important`
                 }),
                 position: 'relative',
-                
             }}
         >
             <TableSortLabel

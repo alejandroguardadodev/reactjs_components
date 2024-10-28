@@ -1,16 +1,32 @@
 import React from 'react'
 
+import { styled } from '@mui/system'
+
 import { useDrop } from 'react-dnd'
 
 import { 
     TableHead,
     TableRow,
-    TableCell
+    TableCell,
+    Box
 } from '@mui/material'
 
 import TableContext from '../../../../contexts/TableContext'
 
 import DragAndDropTableCell from './DragAndDropTableCell'
+
+const HeadBlinkCell = styled('span', {
+    shouldForwardProp: (props) => props !== "headCellPosX"
+})<{ headCellPosX:number; }>(({ headCellPosX }) => ({
+    position: 'absolute', 
+    left: headCellPosX - 4, // Adjust for centering
+    top: 0, // Adjust for centering
+    width: 8, 
+    height: '100%', 
+    backgroundColor: 'red',
+    pointerEvents: 'none',
+    zIndex: 1000,
+}))
 
 interface EnhancedTableHeadPropsType {
     orderBy: string
@@ -28,10 +44,17 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
     // CONTEXT ----------------------------------------------------------------------------------
     const tableContext = React.useContext(TableContext)
     
+    // USE HOOKS --------------------------------------------------------------------------------
+    const tblHeadRef = React.useRef<HTMLTableSectionElement>(null)
+
     // DRAG AND DROP ----------------------------------------------------------------------------
     const [, drop] = useDrop(() => ({ accept: TYPE_CARD }))
 
     // USE STATE --------------------------------------------------------------------------------
+    const [isResizing, setIsResizing] = React.useState(false)
+    const [headCellPosX, setHeadCellPosX] = React.useState<number>(0)
+
+    // USE MEMO ---------------------------------------------------------------------------------
 
     // CALLBACKS --------------------------------------------------------------------------------
     const FindHeader = React.useCallback(
@@ -61,11 +84,30 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
         }, [FindHeader, tableContext],
     )
     
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+
+        setHeadCellPosX(e.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+
+        const onMouseMove = (mouseMoveEvent: MouseEvent) => {
+            setHeadCellPosX(mouseMoveEvent.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+        }
+    
+        function onMouseUp() {
+            document.body.removeEventListener("mousemove", onMouseMove)
+            
+            setIsResizing(false)
+        }
+      
+        setIsResizing(true)
+        document.body.addEventListener("mousemove", onMouseMove)
+        document.body.addEventListener("mouseup", onMouseUp, { once: true })
+    }
+
     // ------------------------------------------------------------------------------------------
 
     return (
-        <TableHead>
-            <TableRow ref={drop}>
+        <TableHead ref={tblHeadRef}>
+            <TableRow ref={drop} sx={{ position: 'relative' }}>
                 {tableContext && tableContext.displayedHeads.map((head, index) => (
                     <DragAndDropTableCell 
                         order={order}
@@ -78,11 +120,14 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
                         moveItem={MoveHeader} 
                         clearHoverHeader={ClearHoverHeader}
                         onRequestSort={onRequestSort}
+                        handleMouseDown={handleMouseDown}
                     />
                 ))}
 
                 {/* CREATE A NEW COLUMN IF ACTIONS IS REQUIRED */}
-                {showAction && (<TableCell></TableCell>)}
+                {showAction && (<TableCell sx={{ transition: 'all .15s ease-in-out' }}></TableCell>)}
+
+                {isResizing && (<HeadBlinkCell headCellPosX={headCellPosX} />)}
             </TableRow>
         </TableHead>
     )

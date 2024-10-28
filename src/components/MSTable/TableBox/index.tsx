@@ -7,7 +7,8 @@ import {
 import { 
     TableContainer,
     Table,
-    TableBody
+    TableBody,
+    Box
 } from "@mui/material"
 
 import TableContext from "../../../contexts/TableContext"
@@ -97,7 +98,7 @@ const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeigh
                 top: 0,
                 left: 0,
                 width: `${TableContainerWidth}px`,
-                height: `${TableContainerHeight}px`
+                height: `${TableContainerHeight}px`,
             }}
         >
             <Table

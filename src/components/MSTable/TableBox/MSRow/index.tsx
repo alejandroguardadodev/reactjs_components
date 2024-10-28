@@ -143,10 +143,10 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                         className='hover-data-cell'
                         sx={{
                             position: 'relative',
-                            ...(cellWidth && {
-                                width: `${cellWidth}px`,
-                                maxWidth: `${cellWidth}px`,
-                            }),
+                            // ...(cellWidth && {
+                            //     width: `${cellWidth}px`,
+                            //     maxWidth: `${cellWidth}px`,
+                            // }),
                             '&:hover': {
                                 border: '1px solid black !important',
                                 boxShadow: '0px 0px 16px 0px rgba(0,0,0,0.75)',
