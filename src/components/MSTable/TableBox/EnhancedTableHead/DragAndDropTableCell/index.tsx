@@ -48,7 +48,7 @@ interface DragAndDropTableCellPropsType {
     findItem: (key: string) => { index: number } // FINE COLUMN BY AN INDEX
     clearHoverHeader: () => void // CLEAR HOVERED COLUMN
     onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void
-    handleMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void
+    createHandleMouseDown: (cellRef: React.RefObject<HTMLTableCellElement>, key: string, index: number) => (e: React.MouseEvent<HTMLDivElement>) => void
 
     hideLeftBorder?: boolean, // HIDE LEFT BORDER
 }
@@ -61,7 +61,7 @@ interface Item {
 
 const TYPE_CARD = 'CARD'
 
-const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, clearHoverHeader, onRequestSort, handleMouseDown, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
+const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findItem, clearHoverHeader, onRequestSort, createHandleMouseDown, hideLeftBorder=false }:DragAndDropTableCellPropsType) => {
 
     // CONTEXT ----------------------------------------------------------------------------------
     const tableContext = React.useContext(TableContext)
@@ -73,8 +73,10 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     const OriginalIndex = React.useMemo(() => findItem(head.key).index, [head.key, findItem])
     const HeadCellWidth = React.useMemo(() => head.size, [head.size])
 
+    // REF --------------------------------------------------------------------------------------
+    const cellRef = React.useRef<HTMLTableCellElement>(null)
+
     // USE HOOKS --------------------------------------------------------------------------------
-    const { ref: cellRef, width: cellWidth } = useResizeDetector() // GET CURRENT CELL WIDTH
 
     // DRAG AND DROP ----------------------------------------------------------------------------
     const [{ isDragging }, drag] = useDrag(
@@ -120,8 +122,11 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
     // PROPERTIES / USEMEMO ---------------------------------------------------------------------
     const OPACITY = React.useMemo(() => isDragging ? 0.5 : 1, [isDragging])
 
+    const BLICKOBJ = React.useMemo<React.ReactNode>(() => (<DragNDropCell onMouseDown={createHandleMouseDown(cellRef, head.key, OriginalIndex)} />), [cellRef, createHandleMouseDown, head.key, OriginalIndex])
+
     // ACTIONS ----------------------------------------------------------------------------------
     const createSortHandler = (property:string) => (event: React.MouseEvent<unknown>) => { onRequestSort(event, property); }
+
 
     // const handleMouseDown:React.MouseEventHandler<HTMLButtonElement> = (mouseDownEvent) => {
         
@@ -186,7 +191,7 @@ const DragAndDropTableCell = ({ head, dragHover, orderBy, order, moveItem, findI
             >
                 {head.label}
             </TableSortLabel>
-            <DragNDropCell onMouseDown={handleMouseDown} />
+            {BLICKOBJ}
         </CustomTableCell>
     )
 }

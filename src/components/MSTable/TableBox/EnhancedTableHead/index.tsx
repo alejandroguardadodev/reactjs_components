@@ -28,6 +28,13 @@ const HeadBlinkCell = styled('span', {
     zIndex: 1000,
 }))
 
+interface IChangeColumnSizeType {
+    key: string
+    index: number
+    startWidt: number
+    startPosition: number
+}
+
 interface EnhancedTableHeadPropsType {
     orderBy: string
     order: 'asc' | 'desc'
@@ -38,6 +45,9 @@ interface EnhancedTableHeadPropsType {
 }
 
 const TYPE_CARD = 'CARD' // TO IDENTIFY CURRENT DRAG / DROP TYPE
+
+const SMALLEST_CELL_SIZE = 150
+const BIGGEST_CELL_SIZE = 400
 
 const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:EnhancedTableHeadPropsType) => {
 
@@ -53,6 +63,7 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
     // USE STATE --------------------------------------------------------------------------------
     const [isResizing, setIsResizing] = React.useState(false)
     const [headCellPosX, setHeadCellPosX] = React.useState<number>(0)
+    const [InfoColumnResize, setInfoColumnResize] = React.useState<IChangeColumnSizeType | null>(null)
 
     // USE MEMO ---------------------------------------------------------------------------------
 
@@ -84,24 +95,59 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
         }, [FindHeader, tableContext],
     )
     
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const createHandleMouseDown = (cellRef: React.RefObject<HTMLTableCellElement>, key: string, index: number) => {
+        return (e: React.MouseEvent<HTMLDivElement>) => {
 
-        setHeadCellPosX(e.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+            const startCellWidth = Math.floor(cellRef.current?.offsetWidth || 0)
 
-        const onMouseMove = (mouseMoveEvent: MouseEvent) => {
-            setHeadCellPosX(mouseMoveEvent.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
-        }
+            const cellRectLeft = Math.floor(cellRef.current?.getBoundingClientRect().left || 0)
+
+            const cellLeftLimit = cellRectLeft + SMALLEST_CELL_SIZE
+            const cellRightLimit = cellRectLeft + BIGGEST_CELL_SIZE
+
+            const rectX= cellRef.current?.getBoundingClientRect().x
+
+            setHeadCellPosX(e.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+            const startPosition = e.clientX
     
-        function onMouseUp() {
-            document.body.removeEventListener("mousemove", onMouseMove)
-            
-            setIsResizing(false)
+            const onMouseMove = (mouseMoveEvent: MouseEvent) => {
+                if (mouseMoveEvent.clientX > cellLeftLimit && mouseMoveEvent.clientX < cellRightLimit) 
+                    setHeadCellPosX(mouseMoveEvent.clientX - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
+            }
+        
+            function onMouseUp() {
+                document.body.removeEventListener("mousemove", onMouseMove)
+
+                setIsResizing(false)
+                setInfoColumnResize({
+                    key,
+                    index,
+                    startWidt: startCellWidth,
+                    startPosition,
+                })
+                // tableContext?.updateHeadWidth(key, startCellWidth - startPosition.x + headCellPosX)
+                // tableContext?.updateHeadWidth(key, startCellWidth + newSizeToAdd)
+            }
+          
+            setIsResizing(true)
+            document.body.addEventListener("mousemove", onMouseMove)
+            document.body.addEventListener("mouseup", onMouseUp, { once: true })
         }
-      
-        setIsResizing(true)
-        document.body.addEventListener("mousemove", onMouseMove)
-        document.body.addEventListener("mouseup", onMouseUp, { once: true })
     }
+
+    // USE EFECT --------------------------------------------------------------------------------
+    React.useEffect(() => {
+        if (!InfoColumnResize) return
+
+        const { key, index, startWidt, startPosition } = InfoColumnResize
+
+        const newSizeToAdd = startPosition - Math.round(headCellPosX)
+        console.log('headCellPosX',Math.round(headCellPosX))
+        console.log(key, 'startCellWidth + newSizeToAdd', startWidt + newSizeToAdd)
+
+        setInfoColumnResize(null)
+
+    }, [InfoColumnResize, headCellPosX])
 
     // ------------------------------------------------------------------------------------------
 
@@ -120,7 +166,7 @@ const EnhancedTableHead = ({ order, orderBy, onRequestSort, showAction=false }:E
                         moveItem={MoveHeader} 
                         clearHoverHeader={ClearHoverHeader}
                         onRequestSort={onRequestSort}
-                        handleMouseDown={handleMouseDown}
+                        createHandleMouseDown={createHandleMouseDown}
                     />
                 ))}
 
