@@ -21,6 +21,7 @@ import EnhancedTableHead from "./EnhancedTableHead"
 interface MenuItemType {
     title: string;
     icon?: React.ReactNode;
+    onClick?: (id: string, value: (IMSTblCell | undefined)[]) => void;
 }
 
 interface TableBoxPropsType {

@@ -12,7 +12,8 @@ import MSTable from '../../components/MSTable'
 
 import { 
     IMSTblHead,
-    IMSTableHeadInputType
+    IMSTableHeadInputType,
+    IMSTblCell
 } from '../../models/MSTableModel'
 
 import useTestData from '../../hooks/useTestData'
@@ -44,7 +45,12 @@ const TableContainer = styled(Box)(({ theme }) => ({
 const SUBMENU_ITEMS = [
     {
         title: 'Start',
-        icon: <StarBorderIcon />
+        icon: <StarBorderIcon />,
+        onClick: (id: string, value: (IMSTblCell | undefined)[]) => { 
+            const txt = value.find((item) => item?.key === 'title')?.value
+
+            alert('ID: ' + id + ', Title: ' + txt)
+        }
     }
 ]
 
@@ -98,7 +104,7 @@ const HomePage = () => {
                     actionSection={(data: any) => {
                         const d = convertToDataType(data)
 
-                        if (d) return <IconButton disableRipple onClick={() => { alert(`id: ${d.id}; title: ${d.title}`) }}><ArrowForwardIosIcon sx={{ fontSize: '.7rem' }} /></IconButton>
+                        if (d) return <IconButton disableRipple onClick={() => { alert(`id: ${d.id}; title: ${d.title}; date: ${d.date};`) }}><ArrowForwardIosIcon sx={{ fontSize: '.7rem' }} /></IconButton>
                     }}
                     submenuItems={SUBMENU_ITEMS}
                 />

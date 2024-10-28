@@ -41,6 +41,7 @@ interface MousePositionType {
 interface MenuItemType {
     title: string;
     icon?: React.ReactNode;
+    onClick?: (id: string, value: (IMSTblCell | undefined)[]) => void;
 }
 
 interface MSRowPropsType {
@@ -223,7 +224,7 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
             >
                 <MenuList sx={{ padding: '0px !important' }}>
                     {items && items.map((item, index) => (
-                        <MenuItem key={`item-${index}`} onClickCapture={handleSubMenuClose}>
+                        <MenuItem key={`item-${index}`} onClickCapture={handleSubMenuClose} onClick={() => { item.onClick?.(id, data); }}>
                             {item.icon && (
                                 <MenuListItemIcon>
                                     {item.icon}
