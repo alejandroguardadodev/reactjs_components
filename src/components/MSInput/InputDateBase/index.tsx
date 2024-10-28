@@ -35,19 +35,23 @@ const DateContainer = styled.div`
 interface InputDateBasePropsType {
     id: string
     value: string
-    setValue: UseFormSetValue<FieldValues>
+    onChange: (value: string) => void
+    onClose: () => void
 }
 
 const dateToString = (date: DateObject) => {
     return `${date.month}/${date.day}/${date.year}`
 }
 
-const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
+const InputDateBase = ({id, value, onChange, onClose}: InputDateBasePropsType) => {
 
     const [date, setDate] = React.useState<string>("")
 
     const datevalue = React.useMemo(() => {
-        if (value) {
+
+        const datevalue = (date && date !== "")? date : value
+
+        if (datevalue) {
             // if (value instanceof DateObject) return value
             // else if (value instanceof Date) {
             //     return new DateObject().set({
@@ -57,8 +61,8 @@ const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
             //     }) 
             // }
             // else 
-            if (typeof value === "string" && value !== "") {
-                const [m, d, y] = value.split("/")
+            if (typeof datevalue === "string" && datevalue !== "") {
+                const [m, d, y] = datevalue.split("/")
                 
                 return new DateObject().set({
                     year: parseInt(y? y : "0"),
@@ -70,7 +74,7 @@ const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
         
         return null
 
-    }, [value])
+    }, [value, date])
 
     return (
         <DateContainer>
@@ -80,12 +84,12 @@ const InputDateBase = ({id, value, setValue}: InputDateBasePropsType) => {
                 format="MM/DD/YYYY"
                 className='input-component'
                 onChange={(date:DateObject) => {
-                    setDate(date?.isValid ? dateToString(date) : "")
+                    if (date?.isValid) {
+                        onChange(dateToString(date))
+                        setDate(dateToString(date))
+                    }
                 }}
-                
-                onClose={() => {
-                    if (date && date.trim() !== "") setValue(id, date, { shouldValidate: true })
-                }}
+                onClose={onClose}
             />
         </DateContainer>
     )

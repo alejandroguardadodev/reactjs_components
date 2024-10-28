@@ -83,8 +83,7 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
       if (value)
         switch(type) {
           case "date":
-            //trigger()
-            if (!isErr && inline && triggerSubmit) triggerSubmit()
+            //if (!isErr && inline && triggerSubmit) triggerSubmit()
             
             break
         }
@@ -94,11 +93,15 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
   }, [watch, id, type])
 
 
+  const handleDateOnChange = (value: string) => {
+    setValue(id, value)
+  }
+
   const InputElement = React.useMemo<React.ReactNode>(() => {
     switch(type) {
 
       case "date":
-        return <InputDateBase id={id} value={`${defaultvalue}`} setValue={setValue} />
+        return <InputDateBase id={id} value={`${defaultvalue}`} onChange={handleDateOnChange} onClose={() => { triggerSubmit?.() }} />
 
       default:
         return <NomalInput autoFocus={inline} className='input-component' id={`input-${id}`} disabled={disabled} type={type} placeholder={placeholder} {...register(id)} />

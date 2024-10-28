@@ -88,8 +88,6 @@ const HomePage = () => {
         }
     ]
 
-    
-
     return (
         <Container>
             <TableContainer>
