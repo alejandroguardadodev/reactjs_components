@@ -83,12 +83,10 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
         // UPDATE HEADER CELL WIDTH
         updateHeadWidth: (key: string, width: number) => {
             if (width <= 100) return
-
-            const index = table.heads.findIndex((h) => h.key === key)
-
+            
             setTable((table) => update(table, {
                 heads: {
-                    [index]: {
+                    [table.heads.findIndex((h) => h.key === key)]: {
                         size: {
                             $set: width
                         }
@@ -127,6 +125,7 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
             ...table,
             displayedHeads: table.heads.filter((h) => CheckShowColumn(h)), // FILTER HEADS BY SCREEN SIZE
         }))
+
     }, [isDesktop, isTablet, isMobile, table.heads])
 
     React.useEffect(() => {
