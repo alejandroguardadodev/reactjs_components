@@ -2,8 +2,6 @@ import React from 'react'
 
 import styled from 'styled-components'
 
-import { FieldValues, UseFormSetValue } from "react-hook-form"
-
 import DatePicker, { DateObject } from "react-multi-date-picker"
 
 const DateContainer = styled.div`

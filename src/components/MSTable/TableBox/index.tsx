@@ -8,7 +8,6 @@ import {
     TableContainer,
     Table,
     TableBody,
-    Box
 } from "@mui/material"
 
 import TableContext from "../../../contexts/TableContext"
@@ -87,7 +86,7 @@ const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeigh
         })
     ) // ORDER CELLS BY HEADER POSITION
 
-    const handleRequestSort = ( event: React.MouseEvent<unknown>, property: string ) => {
+    const handleRequestSort = (property: string ) => {
         const isAsc = orderBy === property && order === 'asc'
 
         setOrder(isAsc ? 'desc' : 'asc');
@@ -116,7 +115,7 @@ const TableBox = ({ defaultSort, actionSection, containerWidth=0, containerHeigh
                     order={order}
                     orderBy={orderBy}
 
-                    onRequestSort={handleRequestSort}
+                    onRequestSort={(_, property) => handleRequestSort(property)}
                 />
                 <TableBody>
                     {/* DISPLAY ROWS */}

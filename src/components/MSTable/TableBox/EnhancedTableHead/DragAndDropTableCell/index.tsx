@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { useResizeDetector } from 'react-resize-detector'
 import { ConnectableElement, useDrag, useDrop } from 'react-dnd'
 import { styled } from '@mui/system'
 

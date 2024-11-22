@@ -118,7 +118,7 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
     })
 
     // ACTIONS ----------------------------------------------------------------------------------
-    const handleChangePage = (event: unknown, newPage: number) => { setPage(newPage); }
+    const handleChangePage = (newPage: number) => { setPage(newPage); }
 
     // USE EFFECTS ------------------------------------------------------------------------------
     React.useEffect(() => {
@@ -175,7 +175,7 @@ const MSTable = ({ headers, data, render, actionSection, rowHeight=40, submenuIt
                         count={data.length}
                         rowsPerPage={NumberOfRows}
                         page={page}
-                        onPageChange={handleChangePage}
+                        onPageChange={(_, newPage) => handleChangePage(newPage)}
                     />
                 </Box>
             </Stack>

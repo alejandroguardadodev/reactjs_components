@@ -8,7 +8,6 @@ import {
     TableHead,
     TableRow,
     TableCell,
-    Box
 } from '@mui/material'
 
 import TableContext from '../../../../contexts/TableContext'

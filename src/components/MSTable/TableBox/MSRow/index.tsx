@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react'
+import React from 'react'
 
 import { styled } from '@mui/system'
 
@@ -16,8 +16,6 @@ import {
     TableRow,
     TableCell
 } from '@mui/material'
-
-import TableContext from '../../../../contexts/TableContext';
 
 import MSCellValue from './MSCellValue';
 
@@ -55,7 +53,6 @@ interface MSRowPropsType {
 }
 
 const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXLimit=0, id="" }:MSRowPropsType) => {
-    const tableContext = React.useContext(TableContext)
 
     const cellRef = React.useRef<HTMLTableCellElement>(null) // GET THE APROPIATE CELL REF TO SHOW THE MENU
 
@@ -105,15 +102,15 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
         };
     })
 
-    const GetCellWidth = React.useCallback((cellKey:string):number | undefined => {
-        if (tableContext?.heads) {
-            const head = tableContext.heads.find((head) => head.key === cellKey)
+    // const GetCellWidth = React.useCallback((cellKey:string):number | undefined => {
+    //     if (tableContext?.heads) {
+    //         const head = tableContext.heads.find((head) => head.key === cellKey)
             
-            if (head) return head.size
-        }
+    //         if (head) return head.size
+    //     }
 
-        return undefined
-    }, [tableContext?.heads])
+    //     return undefined
+    // }, [tableContext?.heads])
 
     return (
         <>
@@ -135,8 +132,6 @@ const MSRow = ({ data, hoverHead, action, items, inputHeaderKeys=[], containerXL
                 }} 
             >
                 {data.filter((cell) => cell !== undefined).map((cell, index) => {
-                    
-                    const cellWidth = GetCellWidth(cell.key)
 
                     return <TableCell
                         key={`col-${cell.key}-${index}`}

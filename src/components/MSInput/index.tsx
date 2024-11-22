@@ -65,7 +65,7 @@ const MSInput = ({ id, label="", inline=false, disabled=false, defaultvalue="", 
 
   //const [fieldvalue, setFieldvalue] = React.useState<string>(`${defaultvalue}`)
 
-  const { register, setValue, watch, trigger, formState: { errors } } = useFormContext() 
+  const { register, setValue, watch, formState: { errors } } = useFormContext() 
 
   const isErr = React.useMemo(() => !!errors[id], [ errors, errors[id], id ])
   const errMessage = React.useMemo(():string => isErr? `${errors[id]!.message}` : '', [isErr, errors, id])
