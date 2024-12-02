@@ -34,7 +34,7 @@ const theme = createTheme({
             color: 'black !important',
             cursor: 'pointer',
             background: 'transparent',
-            padding: '8px 2px 4px 6px',
+            padding: '8px 4px 6px 6px',
             borderBottom: '0px',
             //border: '1px solid rgba(0,0,0,.4)',
             borderLeft: '1px solid rgba(0,0,0,.2) !important',

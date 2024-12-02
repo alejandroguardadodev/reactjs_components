@@ -1,0 +1,1 @@
+export const DRAG_DROP_TYPE_HEADER:string = "DRAG_DROP_TYPE_HEADER"

@@ -12,6 +12,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import CssBaseline from '@mui/material/CssBaseline'
 
 import HomePage from './pages/HomePage'
+import TablePage from './pages/TablePage'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             
             <Routes>
               <Route path='/' element={<HomePage />} />
+              <Route path='/table' element={<TablePage />} />
             </Routes>
           
           </ThemeProvider>
