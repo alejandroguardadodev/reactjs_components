@@ -29,23 +29,29 @@ const MTable = ({ defaultSort = "", ...props }: MTablePropsType) => {
         // Wrapping the MTable component inside MTableContextProvider to provide context to its children
         // The spread operator passes the props to the context provider
         <MTableContextProvider {...props} orderBy={defaultSort}>
-            <Box 
-                ref={tableBoxRef} 
+            {/* <Box 
+                
                 sx={{ 
-                    minWidth: '100%', 
-                    height: '100%',
+                    // height: '100%',
                     ...(minHeight && { minHeight }),
                     ...(maxHeight && { maxHeight })
                 }}
-            >
-                <TableContainer>
+            > */}
+                <TableContainer ref={tableBoxRef} >
                     <Table
                         stickyHeader
+                        sx={{
+                            width: 'fit-content',
+                            minWidth: '100px',
+                            borderCollapse: 'collapse',
+                            borderSpacing: '0px',
+                            tableLayout: 'fixed'
+                        }}
                     >
                         <MTableHeader />
                     </Table>
                 </TableContainer>
-            </Box>
+            {/* </Box> */}
         </MTableContextProvider>
     )
 }

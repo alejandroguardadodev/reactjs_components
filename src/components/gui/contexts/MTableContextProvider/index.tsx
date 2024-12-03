@@ -38,6 +38,8 @@ export interface MTableContextPropsType {
 
     minColumnWidth?: number
     maxColumnWidth?: number
+    blinkColor?: string
+    isResizing?: boolean
 
     order?: 'asc' | 'desc'
     orderBy?: string
@@ -46,6 +48,7 @@ export interface MTableContextPropsType {
     maxHeight?: number | null
 
     setHoverHead?: (key: string | null) => void
+    setIsResizing?: (isResizing: boolean) => void
     moveHead?: (head: MTblHeaderDataType, index: number, atIndex: number) => void
     handleRequestSort?: (propertyKey: string ) => void
     updateColumnWidth?: (key: string, width: number) => void
@@ -56,15 +59,18 @@ const initValue: MTableContextPropsType = {
     order: 'asc',
     minHeight: null,
     maxHeight: null,
+    isResizing: false,
     header: [],
     hoverHeadKey: null,
     setHoverHead: undefined,
     moveHead: undefined,
     handleRequestSort: undefined,
     updateColumnWidth: undefined,
+    setIsResizing: undefined,
     orderBy: '',
     minColumnWidth: 150,
-    maxColumnWidth: 400
+    maxColumnWidth: 400,
+    blinkColor: '#ff0000'
 };
 
 // Create the context with the default value
@@ -79,17 +85,35 @@ interface MTableContextProviderProps extends MTableContextPropsType {
 const MTableContextProvider: React.FC<MTableContextProviderProps> = ({ children, ...props }) => {
 
     const [data, setData] = React.useState<MTableContextPropsType>({
+
+        header: (props.header ?? initValue.header).map((h) => {
+            return {
+                ...h,
+                width: props.minColumnWidth ?? initValue.minColumnWidth,
+            }
+        }),
+
         minHeight: props.minHeight ?? initValue.minHeight,
         maxHeight: props.maxHeight ?? initValue.maxHeight,
-        header: props.header ?? initValue.header,
         order: props.order ?? initValue.order,
         orderBy: props.orderBy ?? initValue.orderBy,
         hoverHeadKey: props.hoverHeadKey ?? initValue.hoverHeadKey,
+        blinkColor: props.blinkColor ?? initValue.blinkColor,
+        isResizing: props.isResizing ?? initValue.isResizing,
+
+        minColumnWidth: props.minColumnWidth ?? initValue.minColumnWidth,
+        maxColumnWidth: props.maxColumnWidth ?? initValue.maxColumnWidth,
 
         setHoverHead: (key: string | null) => {
             setData((data) => ({
                 ...data,
                 hoverHeadKey: key
+            }))
+        },
+        setIsResizing: (resizing: boolean) => {
+            setData((data) => ({
+                ...data,
+                isResizing: resizing
             }))
         },
         moveHead: (head, index, atIndex) => {

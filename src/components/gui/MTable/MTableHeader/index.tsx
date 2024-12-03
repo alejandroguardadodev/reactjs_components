@@ -17,8 +17,8 @@ import DnDTableCell from "./DnDTableCell"
 import { TableContext } from "../../contexts/MTableContextProvider"
 
 const HeadBlinkCell = styled('span', {
-    shouldForwardProp: (props) => props !== "headCellPosX"
-})<{ headCellPosX:number; }>(({ headCellPosX }) => ({
+    shouldForwardProp: (props) => props !== "headCellPosX" && props !== "blinkColor",
+})<{ headCellPosX:number; blinkColor?:string; }>(({ headCellPosX, blinkColor }) => ({
     position: 'absolute', 
     left: headCellPosX - 4, // Adjust for centering
     top: 0, // Adjust for centering
@@ -26,7 +26,9 @@ const HeadBlinkCell = styled('span', {
     height: '100%', 
     pointerEvents: 'none',
     zIndex: 1000,
-    background: '#038C65',
+    ...(blinkColor && {
+        background: blinkColor,
+    }),
 }))
 
 interface IChangeColumnSizeType {
@@ -44,7 +46,7 @@ const MTableHeader = () => {
 
     const [, drop] = useDrop(() => ({ accept: DRAG_DROP_TYPE_HEADER }))
 
-    const [isResizing, setIsResizing] = React.useState(false)
+    // const [isResizing, setIsResizing] = React.useState(false)
     const [headCellPosX, setHeadCellPosX] = React.useState<number>(0)
     const [headCellPagePosX, setHeadCellPagePosX] = React.useState<number>(0)
     const [InfoColumnResize, setInfoColumnResize] = React.useState<IChangeColumnSizeType | null>(null)
@@ -97,7 +99,7 @@ const MTableHeader = () => {
             function onMouseUp() {
                 document.body.removeEventListener("mousemove", onMouseMove)
 
-                setIsResizing(false)
+                tableContext.setIsResizing?.(false)
                 setInfoColumnResize({
                     key,
                     index,
@@ -106,7 +108,7 @@ const MTableHeader = () => {
                 })
             }
           
-            setIsResizing(true)
+            tableContext.setIsResizing?.(true)
             document.body.addEventListener("mousemove", onMouseMove)
             document.body.addEventListener("mouseup", onMouseUp, { once: true })
         }
@@ -142,8 +144,7 @@ const MTableHeader = () => {
                         createMouseDownHandler={createMouseDownHandler}
                     />
                 ))}
-
-                {isResizing && (<HeadBlinkCell headCellPosX={headCellPosX} />)}
+                {tableContext.isResizing && (<HeadBlinkCell headCellPosX={headCellPosX} blinkColor={tableContext.blinkColor} />)}
             </TableRow>
         </TableHead>
     )

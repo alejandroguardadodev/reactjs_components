@@ -36,6 +36,7 @@ const Container = styled(Box)(() => ({
 const TableContainer = styled(Box)(({ theme }) => ({
     width: '800px', 
     height: '700px',
+    overflowX: 'scroll',
     [theme.breakpoints.down('md')]: {
         width: '90%',
     }

@@ -113,7 +113,10 @@ const DnDTableCell = ({ head,findHeadData, moveHead, createMouseDownHandler }:Dn
                     maxWidth: `${HeadCellWidth}px`,
                 }),
                 position: 'relative',
+                whiteSspace: 'pre-wrap',
+                wordWrap: 'break-word',
             }}
+            className={`${tableContext.isResizing && "non-mouse-event"}`}
         >
             <TableCellLabel
                 ref={(node:ConnectableElement) =>  head.blockDnD? null : drag(drop(node)) }

@@ -6,7 +6,11 @@ import {
     Box
 } from '@mui/material'
 
-const ResizeBoxBlink = styled(Box)(() => ({
+import { TableContext } from '../../../../contexts/MTableContextProvider'
+
+const ResizeBoxBlink = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'blinkColor',
+})<{blinkColor?: string}>(({ blinkColor }) => ({
     position: 'absolute',
     top: 0,
     right: '-5px',
@@ -20,8 +24,10 @@ const ResizeBoxBlink = styled(Box)(() => ({
     transition: 'all .15s ease-in-out',
     zIndex: 99999,
     '&:hover': {
-        background: '#038C65',
-        cursor: 'e-resize'
+        cursor: 'e-resize',
+        ...(blinkColor && {
+            background: blinkColor
+        })
     }
 }))
 
@@ -30,9 +36,11 @@ interface ResizeBlinkPropsType {
 }
 
 const ResizeBlink = ({ onMouseDown }:ResizeBlinkPropsType) => {
+
+    const tableContext = React.useContext(TableContext)
     
     return (
-        <ResizeBoxBlink onMouseDown={onMouseDown} />
+        <ResizeBoxBlink onMouseDown={onMouseDown} blinkColor={tableContext.blinkColor} />
     )
 }
 
