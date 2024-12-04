@@ -125,7 +125,9 @@ const MTableHeader = () => {
         const movement = Math.round(headCellPagePosX) - startPosition
         const newSize = startWidt + movement
 
-        tableContext.updateColumnWidth?.(key, newSize)
+        const minColumnSize = tableContext.minColumnWidth || 100
+
+        tableContext.updateColumnWidth?.(key, (newSize < minColumnSize)? minColumnSize:newSize)
 
         setInfoColumnResize(null)
         setHeadCellPagePosX(0)
