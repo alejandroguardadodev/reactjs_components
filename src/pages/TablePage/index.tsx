@@ -36,7 +36,7 @@ const TablePage = () => {
     },
     {
       key: "date",
-      label: "Data",
+      label: "Date",
     }  
   ]
 
@@ -54,6 +54,7 @@ const TablePage = () => {
         <MTable 
           header={headerData}
           defaultSort='title'
+          blinkColor='#D9984A'
         />
       </TableContainer>
     </Container>

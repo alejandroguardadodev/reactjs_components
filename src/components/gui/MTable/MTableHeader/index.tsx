@@ -16,6 +16,8 @@ import DnDTableCell from "./DnDTableCell"
 
 import { TableContext } from "../../contexts/MTableContextProvider"
 
+import DnDPreview from "./DnDPreview"
+
 const HeadBlinkCell = styled('span', {
     shouldForwardProp: (props) => props !== "headCellPosX" && props !== "blinkColor",
 })<{ headCellPosX:number; blinkColor?:string; }>(({ headCellPosX, blinkColor }) => ({
@@ -47,6 +49,7 @@ const MTableHeader = () => {
     const [, drop] = useDrop(() => ({ accept: DRAG_DROP_TYPE_HEADER }))
 
     // const [isResizing, setIsResizing] = React.useState(false)
+    const [dragHoverHeadKey, setDragHoverHeadKey] = React.useState<string>('')
     const [headCellPosX, setHeadCellPosX] = React.useState<number>(0)
     const [headCellPagePosX, setHeadCellPagePosX] = React.useState<number>(0)
     const [InfoColumnResize, setInfoColumnResize] = React.useState<IChangeColumnSizeType | null>(null)
@@ -137,15 +140,22 @@ const MTableHeader = () => {
                     <DnDTableCell 
                         key={index}
                         head={head}
+                        zIndex={100 - index}
 
                         findHeadData={FindHead}
                         moveHead={MoveHead}
 
                         createMouseDownHandler={createMouseDownHandler}
+
+                        dragHover={dragHoverHeadKey == head.key} 
+
+                        setHoverHead={setDragHoverHeadKey}
                     />
                 ))}
                 {tableContext.isResizing && (<HeadBlinkCell headCellPosX={headCellPosX} blinkColor={tableContext.blinkColor} />)}
             </TableRow>
+
+            <DnDPreview />
         </TableHead>
     )
 }

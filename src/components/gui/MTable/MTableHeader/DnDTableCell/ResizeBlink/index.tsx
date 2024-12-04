@@ -13,8 +13,8 @@ const ResizeBoxBlink = styled(Box, {
 })<{blinkColor?: string}>(({ blinkColor }) => ({
     position: 'absolute',
     top: 0,
-    right: '-5px',
-    width: '10px',
+    right: '-4px',
+    width: '8px',
     height: '100%',
     borderRadius: '0px',
     padding: 0,

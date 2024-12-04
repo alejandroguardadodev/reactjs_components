@@ -20,7 +20,7 @@ const HeadBlinkCell = styled('span', {
     position: 'absolute', 
     left: headCellPosX - 4, // Adjust for centering
     top: 0, // Adjust for centering
-    width: 8, 
+    width: 6, 
     height: '100%', 
     pointerEvents: 'none',
     zIndex: 1000,
