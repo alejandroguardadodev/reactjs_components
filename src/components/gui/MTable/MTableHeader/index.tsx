@@ -6,10 +6,13 @@ import { useDrop } from 'react-dnd'
 
 import { DRAG_DROP_TYPE_HEADER } from "../../../../constants"
 
+import { MTblHeaderDataType } from "../../contexts/MTableContextProvider"
+
 import { 
-    Box,
+    TableCell,
     TableHead,
-    TableRow
+    TableRow,
+    IconButton 
 } from "@mui/material"
 
 import DnDTableCell from "./DnDTableCell"
@@ -17,6 +20,8 @@ import DnDTableCell from "./DnDTableCell"
 import { TableContext } from "../../contexts/MTableContextProvider"
 
 import DnDPreview from "./DnDPreview"
+
+import AddIcon from '@mui/icons-material/Add'
 
 const HeadBlinkCell = styled('span', {
     shouldForwardProp: (props) => props !== "headCellPosX" && props !== "blinkColor",
@@ -78,7 +83,7 @@ const MTableHeader = () => {
         }, [FindHead, tableContext],
     )
 
-    const createMouseDownHandler = (cellRef: React.RefObject<HTMLTableCellElement>, key: string, index: number) => {
+    const createMouseDownHandler = (cellRef: React.RefObject<HTMLTableCellElement>, head: MTblHeaderDataType, index: number) => {
         return (e: React.MouseEvent<HTMLDivElement>) => {
 
             const startPosition = e.clientX
@@ -87,8 +92,8 @@ const MTableHeader = () => {
 
             const cellRectLeft = Math.floor(cellRef.current?.getBoundingClientRect().left || 0)
 
-            const cellLeftLimit = cellRectLeft + (tableContext.minColumnWidth || 150)
-            const cellRightLimit = cellRectLeft + (tableContext.maxColumnWidth || 400)
+            const cellLeftLimit = cellRectLeft + (head.minWidth || 150)
+            const cellRightLimit = cellRectLeft + (head.maxWidth || 400)
 
             setHeadCellPosX(startPosition - (tblHeadRef?.current?.getBoundingClientRect().left || 0))
     
@@ -104,7 +109,7 @@ const MTableHeader = () => {
 
                 tableContext.setIsResizing?.(false)
                 setInfoColumnResize({
-                    key,
+                    key: head.key,
                     index,
                     startWidt: Math.round(startCellWidth),
                     startPosition,
@@ -155,6 +160,11 @@ const MTableHeader = () => {
                     />
                 ))}
                 {tableContext.isResizing && (<HeadBlinkCell headCellPosX={headCellPosX} blinkColor={tableContext.blinkColor} />)}
+                <TableCell className="left-border" sx={{ width: '60px' }}>
+                    <IconButton aria-label="delete" size="small">
+                        <AddIcon fontSize="inherit" />
+                    </IconButton>
+                </TableCell>
             </TableRow>
 
             <DnDPreview />

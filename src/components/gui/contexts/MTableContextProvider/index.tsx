@@ -28,6 +28,8 @@ export interface MTblHeaderDataType {
     hide?: BooleanBreakpointsType 
     width?: number
     input?: InputDataType
+    minWidth?: number
+    maxWidth?: number
 }
 
 // ------------------------------------------------------------------
@@ -35,11 +37,13 @@ export interface MTblHeaderDataType {
 // Define the context props type
 export interface MTableContextPropsType {
     header: MTblHeaderDataType[]
+    blinkColor: string
+    dndDragColor: string
 
     minColumnWidth?: number
     maxColumnWidth?: number
-    blinkColor?: string
     isResizing?: boolean
+    dndDragClass?: string
 
     order?: 'asc' | 'desc'
     orderBy?: string
@@ -51,6 +55,7 @@ export interface MTableContextPropsType {
     setIsResizing?: (isResizing: boolean) => void
     moveHead?: (head: MTblHeaderDataType, index: number, atIndex: number) => void
     handleRequestSort?: (propertyKey: string ) => void
+    requestSort?: (propertyKey: string, order: 'asc' | 'desc') => void
     updateColumnWidth?: (key: string, width: number) => void
 }
 
@@ -65,12 +70,15 @@ const initValue: MTableContextPropsType = {
     setHoverHead: undefined,
     moveHead: undefined,
     handleRequestSort: undefined,
+    requestSort: undefined,
     updateColumnWidth: undefined,
     setIsResizing: undefined,
     orderBy: '',
     minColumnWidth: 150,
     maxColumnWidth: 400,
-    blinkColor: '#ff0000'
+    blinkColor: '#ff0000',
+    dndDragColor: '#ff0000',
+    dndDragClass: '',
 };
 
 // Create the context with the default value
@@ -87,9 +95,15 @@ const MTableContextProvider: React.FC<MTableContextProviderProps> = ({ children,
     const [data, setData] = React.useState<MTableContextPropsType>({
 
         header: (props.header ?? initValue.header).map((h) => {
+
+            const minWidth =  h.minWidth ?? props.minColumnWidth ?? initValue.minColumnWidth
+            const maxWidth =  h.maxWidth ?? props.maxColumnWidth ?? initValue.maxColumnWidth
+
             return {
                 ...h,
-                width: props.minColumnWidth ?? initValue.minColumnWidth,
+                width: minWidth,
+                minWidth,
+                maxWidth,
             }
         }),
 
@@ -100,6 +114,8 @@ const MTableContextProvider: React.FC<MTableContextProviderProps> = ({ children,
         hoverHeadKey: props.hoverHeadKey ?? initValue.hoverHeadKey,
         blinkColor: props.blinkColor ?? initValue.blinkColor,
         isResizing: props.isResizing ?? initValue.isResizing,
+        dndDragColor: props.dndDragColor ?? initValue.dndDragColor,
+        dndDragClass: props.dndDragClass ?? initValue.dndDragClass,
 
         minColumnWidth: props.minColumnWidth ?? initValue.minColumnWidth,
         maxColumnWidth: props.maxColumnWidth ?? initValue.maxColumnWidth,
@@ -130,6 +146,13 @@ const MTableContextProvider: React.FC<MTableContextProviderProps> = ({ children,
             setData((data) => ({
                 ...data,
                 order: data.orderBy === propertyKey && data.order === 'asc' ? 'desc' : 'asc',
+                orderBy: propertyKey
+            }))
+        },
+        requestSort: (propertyKey: string, order: 'asc' | 'desc') => {
+            setData((data) => ({
+                ...data,
+                order: order,
                 orderBy: propertyKey
             }))
         },

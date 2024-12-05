@@ -29,6 +29,8 @@ const TablePage = () => {
       key: "title",
       label: "Title",
       blockDnD: true,
+      minWidth: 300,
+      maxWidth: 500,
     },
     {
       key: "descr",
@@ -55,6 +57,8 @@ const TablePage = () => {
           header={headerData}
           defaultSort='title'
           blinkColor='#D9984A'
+          dndDragColor="#fafafa"
+          dndDragClass='DnDDragPreview'
         />
       </TableContainer>
     </Container>

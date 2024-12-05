@@ -1,16 +1,30 @@
-import { useDragLayer } from "react-dnd";
+import React from "react"
 
-import { Box } from "@mui/material";
+import { useDragLayer } from "react-dnd"
+
+import { TableCell } from "@mui/material"
+
+import { TableContext } from "../../../contexts/MTableContextProvider"
+
+interface IItemType {
+  id: string
+  label: string
+  originalIndex: number
+  ref: any
+}
 
 const DnDPreview = () => {
+
+  const tableContext = React.useContext(TableContext)
+
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
-    item: monitor.getItem(),
+    item: monitor.getItem() as IItemType,
     itemType: monitor.getItemType(),
     currentOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging()
   }));
 
-  if (!item || !isDragging || !currentOffset) {
+  if (!item || !item.ref || !isDragging || !currentOffset) {
     return null;
   }
 
@@ -19,7 +33,11 @@ const DnDPreview = () => {
   const height = item?.ref?.current?.clientHeight || 100;
 
   return (
-    <Box sx={{
+    <TableCell
+      key={item.id}
+      align="left"
+      padding='none'
+      sx={{ 
         position: "absolute",
         top,
         left,
@@ -27,10 +45,12 @@ const DnDPreview = () => {
         height,
         zIndex: 3090,
         pointerEvents: "none",
-        background: 'red'
-    }}>
-      TEST
-    </Box>
+        background: tableContext.dndDragColor,
+      }}
+      className={`${tableContext.dndDragClass || ''} non-mouse-event`}
+    >
+      {item.label}
+    </TableCell>
   );
 };
 

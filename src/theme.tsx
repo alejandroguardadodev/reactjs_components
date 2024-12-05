@@ -43,6 +43,13 @@ const theme = createTheme({
                 //border: '1px solid #6c7a89',
               background: 'rgba(0,0,0,.02)'
             },
+            '&.DnDDragPreview': {
+              border: '1px solid rgba(0,0,0,.2) !important',
+              boxShadow: '0px 0px 5px -3px rgba(0,0,0,0.5)',
+            },
+            '&.left-border': {
+              borderRight: '1px solid rgba(0,0,0,.2) !important',
+            },
             '&.hover-data-cell': {
               // position: 'relative',
               // '&:hover:before': {
@@ -63,6 +70,32 @@ const theme = createTheme({
         styleOverrides: {
           root: {
             color: 'black !important',
+          }
+        }
+      },
+      MuiMenu: {
+        styleOverrides: {
+          root: {
+            '& .MuiPaper-root': {
+              border: '1px solid rgba(0,0,0,.3) !important'
+            }
+          }
+        }
+      },
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            '& svg': {
+              fontSize: '.78rem',
+              color: 'black !important'
+            }
+          }
+        }
+      },
+      MuiListItemText: {
+        styleOverrides: {
+          primary: {
+            fontSize: '.85rem'
           }
         }
       }

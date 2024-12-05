@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { display, styled } from '@mui/system'
+import { styled } from '@mui/system'
 
-import { ConnectableElement, useDrag, useDrop } from 'react-dnd'
+import { useDrag, useDrop } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
 import {
@@ -17,7 +17,12 @@ import { MTblHeaderDataType, TableContext } from '../../../contexts/MTableContex
 
 import { DRAG_DROP_TYPE_HEADER } from '../../../../../constants'
 
+import MCtxMenu from '../../../MCtxMenu'
+
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 
 const TableCellLabel = styled(Stack)(() => ({
     width: '100%',
@@ -34,9 +39,21 @@ const TableCellLabel = styled(Stack)(() => ({
     }
 }))
 
+interface axis {
+    x: number
+    y: number
+}
+
+interface MenuItemType {
+    id: number;
+    title: string;
+    icon?: React.ReactNode;
+}
+
 interface ItemType {
     id: string
-    originalIndex: number,
+    originalIndex: number
+    label: string
     ref: any
 }
 
@@ -47,16 +64,31 @@ interface DnDTableCellPropsType {
 
     findHeadData: (key: string) => { index: number }
     moveHead: (key: string, atIndex: number) => void
-    createMouseDownHandler: (cellRef: React.RefObject<HTMLTableCellElement>, key: string, index: number) => (e: React.MouseEvent<HTMLDivElement>) => void
+    createMouseDownHandler: (cellRef: React.RefObject<HTMLTableCellElement>, head: MTblHeaderDataType, index: number) => (e: React.MouseEvent<HTMLDivElement>) => void
 
     setHoverHead: (key: string) => void
 }
+
+const MENU_ITEMS:MenuItemType[] = [
+    {
+        id: 1,
+        title: 'Sort ascending',
+        icon: <ArrowUpwardIcon />
+    },
+    {
+        id: 2,
+        title: 'Sort descending',
+        icon: <ArrowDownwardIcon />
+    }
+]
 
 const DnDTableCell = ({ head, zIndex, dragHover, findHeadData, moveHead, createMouseDownHandler, setHoverHead }:DnDTableCellPropsType) => {
 
     const tableContext = React.useContext(TableContext)
 
     const cellRef = React.useRef<HTMLTableCellElement>(null)
+
+    const [mousePosition, setMousePosition] = React.useState<null | axis>(null)
 
     const OriginalIndex = React.useMemo(() => findHeadData(head.key).index, [head.key, findHeadData])
 
@@ -65,7 +97,7 @@ const DnDTableCell = ({ head, zIndex, dragHover, findHeadData, moveHead, createM
     const [{ isDragging }, drag, preview] = useDrag(
         () => ({
             type: DRAG_DROP_TYPE_HEADER,
-            item: { id: head.key, OriginalIndex, ref: cellRef, }, // LINKED INDEX WITH KEY
+            item: { id: head.key, OriginalIndex, ref: cellRef, label: head.label }, // LINKED INDEX WITH KEY
             collect: (monitor) => {
                 return {
                     isDragging: !!monitor.isDragging(), // IDENTIFY IF IS DRAGGING
@@ -103,9 +135,7 @@ const DnDTableCell = ({ head, zIndex, dragHover, findHeadData, moveHead, createM
         [findHeadData, findHeadData],
     )
 
-    const actionCreateSortHandler = () => { tableContext.handleRequestSort?.(head.key); }
-
-    const onMouseMove = (mouseMoveEvent: MouseEvent) => { console.log('mouse move: ', mouseMoveEvent?.pageX, "; isDragging: ", isDragging) }
+    const requestColumnSort = (opt: number) => { tableContext.requestSort?.(head.key, (opt === 1 ? 'asc' : 'desc')); }
 
 
     React.useEffect(() => { // REMOVE THE PREVIEW BEHAIVOR BY DEFAULT
@@ -132,6 +162,10 @@ const DnDTableCell = ({ head, zIndex, dragHover, findHeadData, moveHead, createM
     //                 onClick={actionCreateSortHandler}
 
     const setDragDropElement = (node:HTMLDivElement):React.ReactElement | null => drag(drop(node))
+
+    const handleOpenSubMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+    }
 
     return (
         <>
@@ -164,12 +198,14 @@ const DnDTableCell = ({ head, zIndex, dragHover, findHeadData, moveHead, createM
                 >
                     {head.label}
 
-                    <IconButton className='MBtn-submenu' aria-label="show_sub_menu" disableRipple>
+                    <IconButton className='MBtn-submenu' aria-label="show_sub_menu" disableRipple onClick={handleOpenSubMenu}>
                         <MoreVertIcon />
                     </IconButton>
                 </TableCellLabel>
 
-                <ResizeBlink onMouseDown={createMouseDownHandler(cellRef, head.key, OriginalIndex)} />
+                <ResizeBlink onMouseDown={createMouseDownHandler(cellRef, head, OriginalIndex)} />
+
+                {mousePosition && (<MCtxMenu open={!!mousePosition} items={MENU_ITEMS} position={mousePosition} onClose={() => setMousePosition(null)} onClick={(item) => { requestColumnSort(item.id) }} />)}
             </TableCell>
         </>
     )
