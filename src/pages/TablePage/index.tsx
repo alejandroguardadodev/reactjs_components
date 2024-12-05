@@ -29,12 +29,12 @@ const TablePage = () => {
       key: "title",
       label: "Title",
       blockDnD: true,
-      minWidth: 300,
-      maxWidth: 500,
     },
     {
       key: "descr",
       label: "Description",
+      minWidth: 300,
+      maxWidth: 600,
     },
     {
       key: "date",
@@ -59,6 +59,7 @@ const TablePage = () => {
           blinkColor='#D9984A'
           dndDragColor="#fafafa"
           dndDragClass='DnDDragPreview'
+          allowdAddColumn={false}
         />
       </TableContainer>
     </Container>

@@ -50,6 +50,7 @@ export interface MTableContextPropsType {
     hoverHeadKey?: string | null
     minHeight?: number | null
     maxHeight?: number | null
+    allowdAddColumn?: boolean
 
     setHoverHead?: (key: string | null) => void
     setIsResizing?: (isResizing: boolean) => void
@@ -79,6 +80,7 @@ const initValue: MTableContextPropsType = {
     blinkColor: '#ff0000',
     dndDragColor: '#ff0000',
     dndDragClass: '',
+    allowdAddColumn: false
 };
 
 // Create the context with the default value
@@ -116,6 +118,7 @@ const MTableContextProvider: React.FC<MTableContextProviderProps> = ({ children,
         isResizing: props.isResizing ?? initValue.isResizing,
         dndDragColor: props.dndDragColor ?? initValue.dndDragColor,
         dndDragClass: props.dndDragClass ?? initValue.dndDragClass,
+        allowdAddColumn: props.allowdAddColumn ?? initValue.allowdAddColumn,
 
         minColumnWidth: props.minColumnWidth ?? initValue.minColumnWidth,
         maxColumnWidth: props.maxColumnWidth ?? initValue.maxColumnWidth,
