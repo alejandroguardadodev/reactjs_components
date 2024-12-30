@@ -5,7 +5,7 @@ import { styled } from '@mui/system'
 import {
     IMSTblCell,
     IMSTblKeyInputType
-} from '../../../../models/MSTableModel';
+} from '../../../../../models/MSTableModel';
 
 import {
     Menu,

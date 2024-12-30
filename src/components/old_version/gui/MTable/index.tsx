@@ -1,11 +1,8 @@
-import React from 'react'
-
 import { useResizeDetector } from 'react-resize-detector'
 
 import {
     TableContainer,
-    Table,
-    Box
+    Table
 } from "@mui/material"
 
 import MTableHeader from './MTableHeader'
@@ -20,10 +17,12 @@ interface MTablePropsType extends MTableContextPropsType {
 // Define the MTable component which receives props of type MTableContextPropsType
 const MTable = ({ defaultSort = "", ...props }: MTablePropsType) => {
 
-    const { ref: tableBoxRef, width: tableBoxWidth, height: tableBoxHeight } = useResizeDetector() 
+    //const { ref: tableBoxRef, width: tableBoxWidth, height: tableBoxHeight } = useResizeDetector() 
 
-    const minHeight = props.minHeight || null
-    const maxHeight = props.maxHeight || null
+    const { ref: tableBoxRef } = useResizeDetector() 
+
+    //const minHeight = props.minHeight || null
+    //const maxHeight = props.maxHeight || null
 
     return (
         // Wrapping the MTable component inside MTableContextProvider to provide context to its children

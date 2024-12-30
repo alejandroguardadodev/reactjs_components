@@ -11,9 +11,9 @@ import {
 
 import { 
     IMSTblHead 
-} from '../../../../../models/MSTableModel'
+} from '../../../../../../models/MSTableModel'
 
-import TableContext from '../../../../../contexts/TableContext'
+import TableContext from '../../../../../../contexts/TableContext'
 
 const CustomTableCell = styled(TableCell)(() => ({
     transition: 'all .15s ease-in-out'

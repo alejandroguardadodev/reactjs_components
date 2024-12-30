@@ -2,7 +2,7 @@ import React from "react"
 
 import { 
     IMSTblCell,
-} from "../../../models/MSTableModel"
+} from "../../../../models/MSTableModel"
 
 import { 
     TableContainer,
@@ -10,7 +10,7 @@ import {
     TableBody,
 } from "@mui/material"
 
-import TableContext from "../../../contexts/TableContext"
+import TableContext from "../../../../contexts/TableContext"
 
 
 import MSRow from "./MSRow"

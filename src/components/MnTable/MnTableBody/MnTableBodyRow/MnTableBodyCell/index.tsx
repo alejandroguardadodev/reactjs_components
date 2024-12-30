@@ -99,7 +99,7 @@ const MnTableBodyCell = ({ id, head, value, first }:MnTableBodyCellPropsType) =>
                         overflow: 'hidden',
                         position: 'relative',
                     }}
-                    onDoubleClick={(e) => {
+                    onDoubleClick={() => {
                         if (!IsInputCell) return
         
                         setShowInput(true)
@@ -108,7 +108,7 @@ const MnTableBodyCell = ({ id, head, value, first }:MnTableBodyCellPropsType) =>
                     {showInput && (
                         <MnTableBodyCellForm 
                             defaultValue={value} 
-                            type={head.input?.type || 'text'}
+                            //type={head.input?.type || 'text'}
                             width={containerValueWidth || 100} 
                             onClose={() => { setShowInput(false); setIsThereAnyError(false); }}
                             onSubmit={(v: string) => { head.input?.onSubmit?.({ key: head.key, value: v }, id) }}

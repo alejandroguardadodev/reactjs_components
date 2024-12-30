@@ -5,7 +5,7 @@ import {
     IMSTblHead,
     IMSTblCell,
     IMSTableHeadInputType
-} from '../../models/MSTableModel'
+} from '../../../models/MSTableModel'
 
 import { 
     Box,
@@ -17,9 +17,9 @@ import TableBox from "./TableBox"
 import EnhancedTableToolbar from './EnhancedTableToolbar'
 
 import { useResizeDetector } from 'react-resize-detector'
-import useResponsive from '../../hooks/useResponsive'
+import useResponsive from '../../../hooks/old_useResponsive'
 
-import TableContext, { TableContextType } from '../../contexts/TableContext'
+import TableContext, { TableContextType } from '../../../contexts/TableContext'
 
 // SUB MENU ITEMS TYPES
 interface MenuItemType {

@@ -43,7 +43,11 @@ const MnTableBody = () => {
 
     return (
         <TableBody>
-            {newElementInput && (<MnTableBodyAddRow label={newElementInput.label} onSubmit={newElementInput.onSubmit} inputType={newElementInput.type} colSpan={visibleColumns.length} />)}
+            {newElementInput && (<MnTableBodyAddRow 
+                label={newElementInput.label} 
+                onSubmit={newElementInput.onSubmit} 
+                //inputType={newElementInput.type} 
+                colSpan={visibleColumns.length} />)}
 
             {VisibleRows.map((r, index) => {
 

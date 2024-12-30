@@ -31,11 +31,11 @@ const NewActionButton = styled(Button)(() => ({
 interface MnTableBodyAddRowPropsType {
     colSpan: number
     label: string
-    inputType: 'text' | 'date'
+    //inputType: 'text' | 'date'
     onSubmit: (value: string) => void
 }
 
-const MnTableBodyAddRow = ({colSpan, inputType, label, onSubmit}: MnTableBodyAddRowPropsType) => {
+const MnTableBodyAddRow = ({colSpan, label, onSubmit}: MnTableBodyAddRowPropsType) => {
 
     const { ref: tableCellRef, width: tableCellWidth } = useResizeDetector()
 
@@ -76,7 +76,7 @@ const MnTableBodyAddRow = ({colSpan, inputType, label, onSubmit}: MnTableBodyAdd
                     {showInput && (
                         <MnTableBodyCellForm 
                             defaultValue="" 
-                            type={inputType}
+                            //type={inputType}
                             width={inputCellWidth || 100} 
                             onClose={() => { setShowInput(false) }}
                             onSubmit={(v: string) => { onSubmit(v) }}

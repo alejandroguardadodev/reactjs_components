@@ -15,7 +15,7 @@ import ResizeBlink from './ResizeBlink'
 
 import { MTblHeaderDataType, TableContext } from '../../../contexts/MTableContextProvider'
 
-import { DRAG_DROP_TYPE_HEADER } from '../../../../../constants'
+import { DRAG_DROP_TYPE_HEADER } from '../../../../../../constants'
 
 import MCtxMenu from '../../../MCtxMenu'
 

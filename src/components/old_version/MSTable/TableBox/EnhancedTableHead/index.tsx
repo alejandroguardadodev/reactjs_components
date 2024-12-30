@@ -10,7 +10,7 @@ import {
     TableCell,
 } from '@mui/material'
 
-import TableContext from '../../../../contexts/TableContext'
+import TableContext from '../../../../../contexts/TableContext'
 
 import DragAndDropTableCell from './DragAndDropTableCell'
 

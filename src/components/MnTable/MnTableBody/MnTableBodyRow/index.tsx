@@ -29,7 +29,7 @@ const MnTableBodyRow = ({ id, cells, subMenuDataPackage }:MnTableBodyRowPropsTyp
     const tableContext = React.useContext(TableContext)
 
     const [mousePosition, setMousePosition] = React.useState<null | IAxisType>(null)
-    const [subMenuItems, setSubMenuItems] = React.useState<IContextMenuItemType[] | undefined>(tableContext.rowSubMenuItems)
+    const [subMenuItems] = React.useState<IContextMenuItemType[] | undefined>(tableContext.rowSubMenuItems)
 
     const useMenu = React.useMemo(() => Boolean(subMenuItems), [subMenuItems])
     const openSubMenu = React.useMemo(() => Boolean(mousePosition), [mousePosition])

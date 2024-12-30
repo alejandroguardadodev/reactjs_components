@@ -4,7 +4,7 @@ import { styled } from '@mui/system'
 
 import { useDrop } from 'react-dnd'
 
-import { DRAG_DROP_TYPE_HEADER } from "../../../../constants"
+import { DRAG_DROP_TYPE_HEADER } from "../../../../../constants"
 
 import { MTblHeaderDataType } from "../../contexts/MTableContextProvider"
 

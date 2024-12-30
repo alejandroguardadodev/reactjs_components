@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { styled } from '@mui/system'
 
 import { FormProvider, useForm } from 'react-hook-form'
@@ -9,7 +7,7 @@ import MnInlineInputForm from '../../../inputs/MnInlineInputForm'
 interface IMnTableBodyCellFormPropsType {
     width: number
     defaultValue: string
-    type: 'text' | 'date' 
+    // type: 'text' | 'date' 
     onClose: () => void
     onSubmit: (value: string) => void
     onErrorInput?: (error: boolean) => void
@@ -37,7 +35,7 @@ const Form = styled('form')(() => ({
     alignItems: 'center',
 }))
 
-const MnTableBodyCellForm = ({ defaultValue, width, type, onClose, onSubmit, onErrorInput }:IMnTableBodyCellFormPropsType) => {
+const MnTableBodyCellForm = ({ defaultValue, width, onClose, onSubmit, onErrorInput }:IMnTableBodyCellFormPropsType) => {
     
     const methods = useForm<{ data: string }>({
         defaultValues: {

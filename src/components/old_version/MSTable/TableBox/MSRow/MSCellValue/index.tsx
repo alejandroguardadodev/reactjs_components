@@ -4,11 +4,11 @@ import { styled } from '@mui/system'
 
 import { 
     IMSTblKeyInputType 
-} from '../../../../../models/MSTableModel'
+} from '../../../../../../models/MSTableModel'
 
 import MSCellFormValue from './MSCellFormValue'
 
-import TableContext from '../../../../../contexts/TableContext'
+import TableContext from '../../../../../../contexts/TableContext'
 
 const DivCell = styled('div', {
     shouldForwardProp: (prop) => prop !== 'cellWidth',
