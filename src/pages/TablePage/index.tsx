@@ -5,8 +5,8 @@ import {
     Box
 } from "@mui/material"
 
-import MTable from "../../components/gui/MTable"
-import { MTblHeaderDataType } from '../../components/gui/contexts/MTableContextProvider'
+import MTable from "../../components/old_version/gui/MTable"
+import { MTblHeaderDataType } from '../../components/old_version/gui/contexts/MTableContextProvider'
 
 const TableContainer = styled(Box)(() => ({
   padding: '5px',

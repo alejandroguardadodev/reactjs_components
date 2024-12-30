@@ -16,3 +16,7 @@ body, #root {
   margin: 0px !important;
   text-align: start;
 }
+
+*,*:focus,*:hover{
+  outline:none;
+}

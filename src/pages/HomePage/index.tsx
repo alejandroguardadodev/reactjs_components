@@ -8,7 +8,7 @@ import {
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
-import MSTable from '../../components/MSTable'
+import MSTable from '../../components/old_version/MSTable'
 
 import { 
     IMSTblHead,
